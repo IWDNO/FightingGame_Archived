@@ -2,14 +2,13 @@ package com.mygdx.game.bodies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.characters.Character;
 import com.mygdx.game.controller.ControlScheme;
-
-import static com.mygdx.game.views.MainScreen.WORLD_HEIGHT;
 
 public class Player {
     private ControlScheme cs;
@@ -26,10 +25,9 @@ public class Player {
     private boolean isFacingRight;
     private boolean isDashingAvailable = true;
 
-    private SpriteBatch sb;
-    private Texture playerTexture;
+    private final Sprite playerSprite;
 
-    public Player (Character character, float x, float y, ControlScheme cs, int playerNumber, SpriteBatch sb) {
+    public Player (Character character, float x, float y, ControlScheme cs, int playerNumber) {
         this.cs = cs;
         this.character = character;
 
@@ -37,22 +35,14 @@ public class Player {
         player = character.createPlayer(x, y);
         isFacingRight = playerNumber == 1;
 
-        this.sb = sb;
-        playerTexture = new Texture(character.getTexture());
+        playerSprite = new Sprite(new Texture(character.getTexture()));
+        playerSprite.setSize(1, 2);
     }
 
-    public void update() {
-        sb.begin();
-
-        float textureWidth = WORLD_HEIGHT / 2 / 8;
-        float textureHeight = WORLD_HEIGHT / 9.5f;
-        if (isFacingRight) {
-            sb.draw(playerTexture, player.getPosition().x - 0.5f, player.getPosition().y - 0.8f, textureWidth, textureHeight);
-        } else {
-            sb.draw(playerTexture, player.getPosition().x - 0.5f + textureWidth, player.getPosition().y - 0.8f,
-                    -textureWidth, textureHeight);
-        }
-        sb.end();
+    public void update(SpriteBatch sb) {
+        playerSprite.setPosition(player.getPosition().x - playerSprite.getWidth() / 2,
+                player.getPosition().y - playerSprite.getHeight() / 2);
+        playerSprite.draw(sb);
         handleInput();
     }
 
@@ -129,6 +119,8 @@ public class Player {
         } else if (player.getLinearVelocity().x < 0) {
             isFacingRight = false;
         }
+
+        playerSprite.setFlip(!isFacingRight, false);
     }
 
     public float generateDamage(int attackType) {
@@ -136,6 +128,7 @@ public class Player {
     }
 
     public void takeDamage(float damage) {
+        damage = isDashing ? damage / 2 : damage;
         character.takeDamage(damage);
         currentHealth = character.getHP();
     }

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainScreen implements Screen {
-    public static final float WORLD_HEIGHT = 16;
+    public static final float WORLD_HEIGHT = 20;
 
     public FightingGame parent;
     public GameContactListener contactListener;
@@ -34,10 +34,17 @@ public class MainScreen implements Screen {
 
     public Player player1;
     public Player player2;
+    private ControlScheme p1cs = new ControlScheme(
+            Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.V, Input.Keys.Z, Input.Keys.X, Input.Keys.C);
+    private ControlScheme p2cs = new ControlScheme(
+            Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.COMMA, Input.Keys.PERIOD);
+
+    private Texture background;
 
     public MainScreen(FightingGame fg) {
         parent = fg;
         contactListener = new GameContactListener(this);
+        background = new Texture("images/bg1.jpg");
     }
 
     @Override
@@ -61,23 +68,13 @@ public class MainScreen implements Screen {
         };
         Gdx.input.setInputProcessor(controller);
 
-
         createBounds();
         createCube(-10, -7, 2, 2);
         TestCharacter p1 = new TestCharacter(world, 1, this);
         TestCharacter p2 = new TestCharacter(world, 2, this);
-//        parent.assetManager.queueAddImages(new String[] {p1.getTexture(), p2.getTexture()});
-//        parent.assetManager.manager.finishLoading();
-//        Texture p1Texture = parent.assetManager.manager.get(p1.getTexture());
-//        Texture p2Texture = parent.assetManager.manager.get(p2.getTexture());
-//        Texture player = new Texture();
 
-        ControlScheme p1cs = new ControlScheme(Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.Z, Input.Keys.X, Input.Keys.C, Input.Keys.V);
-        ControlScheme p2cs = new ControlScheme(Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.SLASH, Input.Keys.M, Input.Keys.COMMA, Input.Keys.PERIOD);
-
-
-        player1 = new Player(p1, -5, 0, p1cs, 1, sb);
-        player2 = new Player(p2, 5, 0, p2cs, 2, sb);
+        player2 = new Player(p2, 5, 0, p2cs, 2);
+        player1 = new Player(p1, -5, 0, p1cs, 1);
     }
 
     @Override
@@ -86,19 +83,16 @@ public class MainScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         debugRenderer.render(world, camera.combined);
-
-        player1.update();
-        player2.update();
+        sb.begin();
+        player1.update(sb);
+        player2.update(sb);
+        sb.end();
         world.step(1/60f, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
     }
 
     @Override
     public void resize(int width, int height) {
-        float aspectRatio = (float) width / (float) height;
 
-        camera.viewportWidth = WORLD_HEIGHT * aspectRatio;
-        camera.viewportHeight = WORLD_HEIGHT;
-        camera.update();
     }
 
     @Override

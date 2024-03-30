@@ -1,9 +1,12 @@
 package com.mygdx.game.characters;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.views.MainScreen;
 
+import static com.mygdx.game.BodyFactory.BodyFactory.createDefaultAttack;
+import static com.mygdx.game.BodyFactory.BodyFactory.createDefaultPlayer;
 import static com.mygdx.game.views.MainScreen.WORLD_HEIGHT;
 
 public class TestCharacter extends Character {
@@ -30,31 +33,8 @@ public class TestCharacter extends Character {
 
     @Override
     public Body createPlayer(float x, float y) {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(x, y);
-        bodyDef.fixedRotation = true;
-
-        PolygonShape boxShape = new PolygonShape();
-        float height = WORLD_HEIGHT / 20f;
-        boxShape.setAsBox(height / 2f, height);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = boxShape;
-        fixtureDef.friction = 0f;
-        fixtureDef.restitution = 0f;
-        fixtureDef.density = 1f;
-
-        Body player = world.createBody(bodyDef);
+        Body player = createDefaultPlayer(x, y, world);
         player.setUserData(String.format("Player%d", playerNumber));
-        player.createFixture(fixtureDef);
-
-        // Установка фильтра столкновений для игрока
-        Filter filter = new Filter();
-        filter.groupIndex = -1; // Устанавливаем одинаковый groupIndex для игроков
-        player.getFixtureList().get(0).setFilterData(filter);
-
-        boxShape.dispose();
 
         return player;
     }
@@ -63,7 +43,8 @@ public class TestCharacter extends Character {
     public void useNormalAttack(Body player) {
         if (attackCount < 1) {
             attackCount++;
-            Body attack = createAttack(player.getPosition().x, player.getPosition().y, 1.25f);
+            Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1.25f, world);
+            attack.setUserData(String.format("Player%d-attack", playerNumber));
 
             Timer timer = new Timer();
             timer.scheduleTask(new Timer.Task() {
@@ -83,7 +64,8 @@ public class TestCharacter extends Character {
 
     @Override
     public void useE(Body player) {
-        Body attack = createAttack(player.getPosition().x, player.getPosition().y, 1f);
+        Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1f, world);
+        attack.setUserData(String.format("Player%d-attack", playerNumber));
 
         Timer timer = new Timer();
         timer.scheduleTask(new Timer.Task() {
@@ -96,7 +78,8 @@ public class TestCharacter extends Character {
 
     @Override
     public void useQ(Body player) {
-        Body attack = createAttack(player.getPosition().x, player.getPosition().y, 1f);
+        Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1f, world);
+        attack.setUserData(String.format("Player%d-attack", playerNumber));
 
         Timer timer = new Timer();
         timer.scheduleTask(new Timer.Task() {
@@ -127,30 +110,14 @@ public class TestCharacter extends Character {
 
     @Override
     public String getTexture() {
-        return "images/player.png";
+        return "images/player2.png";
     }
 
-    private Body createAttack(float x, float y, float radius) {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(x, y);
+    @Override
+    public void update(SpriteBatch sb) {
 
-        Body sensorBody = world.createBody(bodyDef);
-        sensorBody.setUserData(String.format("Player%d-attack", playerNumber));
-
-        FixtureDef fixtureDef = new FixtureDef();
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(radius);
-
-        fixtureDef.isSensor = true;
-        fixtureDef.shape = circleShape;
-
-        sensorBody.createFixture(fixtureDef);
-
-        circleShape.dispose();
-
-        return sensorBody;
     }
+
 
     public float getAttackScale(int attack) {
         switch (attack) {

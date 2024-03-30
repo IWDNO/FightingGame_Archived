@@ -1,5 +1,6 @@
 package com.mygdx.game.characters;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 
 public abstract class Character {
@@ -15,4 +16,5 @@ public abstract class Character {
     public abstract void takeDamage(float damage);
     public abstract float getHP();
     public abstract String getTexture();
+    public abstract void update(SpriteBatch spriteBatch);
 }
