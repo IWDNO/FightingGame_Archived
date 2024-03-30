@@ -1,5 +1,6 @@
 package com.mygdx.game.BodyFactory;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class BodyFactory {
@@ -51,5 +52,28 @@ public class BodyFactory {
         circleShape.dispose();
 
         return sensorBody;
+    }
+
+    public static void createWorldBounds(float halfWorldWidth, float halfWorldHeight, World world) {
+        BodyDef bodyDef = new BodyDef();
+        FixtureDef fixtureDef = new FixtureDef();
+
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(0, 0);
+
+        Vector2 upLeft = new Vector2(-halfWorldWidth, halfWorldHeight),
+                upRight = new Vector2(halfWorldWidth, halfWorldHeight),
+                bottomLeft = new Vector2(-halfWorldWidth, -halfWorldHeight),
+                bottomRight = new Vector2(halfWorldWidth, -halfWorldHeight);
+
+        ChainShape shape = new ChainShape();
+        shape.createChain(new Vector2[] {upLeft, bottomLeft, bottomRight, upRight, upLeft});
+        fixtureDef.shape = shape;
+        fixtureDef.friction = 0f;
+        fixtureDef.restitution = 0;
+
+        world.createBody(bodyDef).createFixture(fixtureDef);
+
+        shape.dispose();
     }
 }

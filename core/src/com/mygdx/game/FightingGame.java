@@ -59,5 +59,4 @@ public class FightingGame extends Game {
 		playSong.dispose();
 		assetManager.manager.dispose();
 	}
-
 }

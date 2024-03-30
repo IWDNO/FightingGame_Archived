@@ -131,5 +131,12 @@ public class Player {
         damage = isDashing ? damage / 2 : damage;
         character.takeDamage(damage);
         currentHealth = character.getHP();
+        playerSprite.setColor(1,0,0,1);
+        new Timer().scheduleTask(new Timer.Task(){
+            @Override
+            public void run() {
+                playerSprite.setColor(1,1,1,1);
+            }
+        }, 0.1f);
     }
 }

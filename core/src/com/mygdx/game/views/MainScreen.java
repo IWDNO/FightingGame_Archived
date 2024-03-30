@@ -18,6 +18,8 @@ import com.mygdx.game.controller.InputController;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mygdx.game.BodyFactory.BodyFactory.createWorldBounds;
+
 public class MainScreen implements Screen {
     public static final float WORLD_HEIGHT = 20;
 
@@ -121,30 +123,10 @@ public class MainScreen implements Screen {
     }
 
     public void createBounds() {
-        BodyDef bodyDef = new BodyDef();
-        FixtureDef fixtureDef = new FixtureDef();
-
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0, 0);
-
-                    //WORLD_HEIGHT * 16/9 / 2f, WORLD_HEIGHT/2f
+        //WORLD_HEIGHT * 16/9 / 2f, WORLD_HEIGHT/2f
         float halfWorldWidth = WORLD_HEIGHT * camera.viewportWidth / camera.viewportHeight / 2f,
-              halfWorldHeight = WORLD_HEIGHT / 2f;
-
-        Vector2 upLeft = new Vector2(-halfWorldWidth, halfWorldHeight),
-                upRight = new Vector2(halfWorldWidth, halfWorldHeight),
-                bottomLeft = new Vector2(-halfWorldWidth, -halfWorldHeight),
-                bottomRight = new Vector2(halfWorldWidth, -halfWorldHeight);
-
-        ChainShape shape = new ChainShape();
-        shape.createChain(new Vector2[] {upLeft, bottomLeft, bottomRight, upRight, upLeft});
-        fixtureDef.shape = shape;
-        fixtureDef.friction = 0f;
-        fixtureDef.restitution = 0;
-
-        world.createBody(bodyDef).createFixture(fixtureDef);
-
-        shape.dispose();
+                halfWorldHeight = WORLD_HEIGHT / 2f;
+        createWorldBounds(halfWorldWidth, halfWorldHeight, world);
     }
 
     private void createCube(float x, float y, float width, float height) {
