@@ -3,9 +3,11 @@ package com.mygdx.game.characters;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
+import com.mygdx.game.animator.DamageText;
 import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.BodyFactory.BodyFactory.createDefaultAttack;
@@ -27,6 +29,8 @@ public class TestCharacter extends Character {
     public float attackCount = 0;
     private float currentHealth = MAX_HP;
 
+    private DamageText damageWriter;
+
     public static Animation<TextureRegion> idleAnimation = AnimationFactory.create(6, 1, "images/Wizard Pack/Idle.png");
     public static Animation<TextureRegion> runAnimation = AnimationFactory.create(8, 1, "images/Wizard Pack/Run.png");
     public static Animation<TextureRegion> jumpAnimation = AnimationFactory.create(2, 1, "images/Wizard Pack/Jump.png");
@@ -41,6 +45,7 @@ public class TestCharacter extends Character {
         this.world = world;
         this.playerNumber = playerNumber;
         this.screen = screen;
+        damageWriter = new DamageText(playerNumber);
     }
 
     @Override
@@ -95,8 +100,12 @@ public class TestCharacter extends Character {
     }
 
     @Override
-    public void takeDamage(float damage) {
-        currentHealth -= (damage - (damage * DEF_SCALE));
+    public void takeDamage(float damage, Vector2 hitPosition) {
+        float final_damage = (damage - (damage * DEF_SCALE));
+        currentHealth -= final_damage;
+
+        damageWriter.spawn(hitPosition, final_damage);
+
         if (currentHealth <= 0) {
             screen.endGame();
         }
@@ -114,7 +123,7 @@ public class TestCharacter extends Character {
 
     @Override
     public void update(SpriteBatch sb) {
-
+        damageWriter.render(sb);
     }
 
 

@@ -73,6 +73,8 @@ public class Player {
                 player.getPosition().y - playerSprite.getHeight() / 2);
         playerSprite.draw(sb);
 
+        character.update(sb);
+
         handleInput();
     }
 
@@ -203,7 +205,7 @@ public class Player {
         }, 0.4f);
 
         damage = isDashing ? damage / 2 : damage;
-        character.takeDamage(damage);
+        character.takeDamage(damage, hitPosition);
         currentHealth = character.getHP();
 
         playerSprite.setColor(1,0,0,1);
