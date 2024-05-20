@@ -1,13 +1,15 @@
 package com.mygdx.game.characters;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Timer;
+import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.BodyFactory.BodyFactory.createDefaultAttack;
 import static com.mygdx.game.BodyFactory.BodyFactory.createDefaultPlayer;
-import static com.mygdx.game.views.MainScreen.WORLD_HEIGHT;
 
 public class TestCharacter extends Character {
     public static final float MAX_HP = 1000;
@@ -20,10 +22,20 @@ public class TestCharacter extends Character {
     private final World world;
     private final MainScreen screen;
 
-    private final float attackDelay = 0.2f;
+    private final float attackDelay = 0.7f;
     private final int playerNumber;
-    private float attackCount = 0;
+    public float attackCount = 0;
     private float currentHealth = MAX_HP;
+
+    public static Animation<TextureRegion> idleAnimation = AnimationFactory.create(6, 1, "images/Wizard Pack/Idle.png");
+    public static Animation<TextureRegion> runAnimation = AnimationFactory.create(8, 1, "images/Wizard Pack/Run.png");
+    public static Animation<TextureRegion> jumpAnimation = AnimationFactory.create(2, 1, "images/Wizard Pack/Jump.png");
+    public static Animation<TextureRegion> fallAnimation = AnimationFactory.create(2, 1, "images/Wizard Pack/Fall.png");
+    public static Animation<TextureRegion> hitAnimation = AnimationFactory.create(4, 1, "images/Wizard Pack/Hit.png");
+    public static Animation<TextureRegion> attack1Animation = AnimationFactory.create(8, 1, "images/Wizard Pack/Attack1.png");
+    public static Animation<TextureRegion> attack2Animation = AnimationFactory.create(8, 1, "images/Wizard Pack/Attack2.png");
+    public static Animation<TextureRegion> dashAnimation = AnimationFactory.create(8, 1, "images/Wizard Pack/Dash.png");
+    public static Animation<TextureRegion> jumpDashAnimation = AnimationFactory.create(2, 1, "images/Wizard Pack/JumpDash.png");
 
     public TestCharacter(World world, int playerNumber, MainScreen screen) {
         this.world = world;
@@ -40,54 +52,41 @@ public class TestCharacter extends Character {
     }
 
     @Override
-    public void useNormalAttack(Body player) {
+    public void useNormalAttack(Body player, boolean facingDirection) {
         if (attackCount < 1) {
-            attackCount++;
-            Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1.25f, world);
-            attack.setUserData(String.format("Player%d-attack", playerNumber));
-
             Timer timer = new Timer();
+            attackCount++;
             timer.scheduleTask(new Timer.Task() {
                 @Override
                 public void run() {
-                    world.destroyBody(attack);
+                    Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1.5f, world, facingDirection);
+                    attack.setUserData(String.format("Player%d-attack", playerNumber));
+                    timer.scheduleTask(new Timer.Task() {
+                        @Override
+                        public void run() {
+                            world.destroyBody(attack);
+                        }
+                    }, 0.8f);
+                    timer.scheduleTask(new Timer.Task() {
+                        @Override
+                        public void run() {
+                            attackCount--;
+                        }
+                    }, attackDelay);
                 }
-            }, 0.05f);
-            timer.scheduleTask(new Timer.Task() {
-                @Override
-                public void run() {
-                    attackCount--;
-                }
-            }, attackDelay);
+            }, 0.2f);
+
         }
     }
 
     @Override
     public void useE(Body player) {
-        Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1f, world);
-        attack.setUserData(String.format("Player%d-attack", playerNumber));
 
-        Timer timer = new Timer();
-        timer.scheduleTask(new Timer.Task() {
-            @Override
-            public void run() {
-                world.destroyBody(attack);
-            }
-        }, 0.05f);
     }
 
     @Override
     public void useQ(Body player) {
-        Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1f, world);
-        attack.setUserData(String.format("Player%d-attack", playerNumber));
 
-        Timer timer = new Timer();
-        timer.scheduleTask(new Timer.Task() {
-            @Override
-            public void run() {
-                world.destroyBody(attack);
-            }
-        }, 0.05f);
     }
 
     @Override
@@ -110,7 +109,7 @@ public class TestCharacter extends Character {
 
     @Override
     public String getTexture() {
-        return "images/player2.png";
+        return "images/Wizard Pack/Run.png";
     }
 
     @Override
@@ -131,4 +130,6 @@ public class TestCharacter extends Character {
                 return 1f;
         }
     }
+
+
 }
