@@ -33,10 +33,10 @@ public class BodyFactory {
         return player;
     }
 
-    public static Body createDefaultAttack(float x,  float y, float radius, World world) {
+    public static Body createDefaultAttack(float x,  float y, float radius, World world, boolean isFacingRight) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(x, y);
+        bodyDef.position.set(isFacingRight ? x + 1f : x - 1f, y);
 
         Body sensorBody = world.createBody(bodyDef);
 

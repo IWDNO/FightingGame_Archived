@@ -4,11 +4,13 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.FightingGame;
 import com.mygdx.game.GameContactListener;
+import com.mygdx.game.animator.Animator;
 import com.mygdx.game.bodies.Player;
 import com.mygdx.game.characters.Character;
 import com.mygdx.game.characters.TestCharacter;
@@ -22,6 +24,7 @@ import static com.mygdx.game.BodyFactory.BodyFactory.createWorldBounds;
 
 public class MainScreen implements Screen {
     public static final float WORLD_HEIGHT = 20;
+    public static final float WORLD_WIDTH = 20;
 
     public FightingGame parent;
     public GameContactListener contactListener;
@@ -31,6 +34,7 @@ public class MainScreen implements Screen {
     private OrthographicCamera camera;
     private InputAdapter controller;
     private SpriteBatch sb;
+    private Sprite mapSprite;
 
     private final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3;
 
@@ -42,11 +46,15 @@ public class MainScreen implements Screen {
             Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.COMMA, Input.Keys.PERIOD);
 
     private Texture background;
+    private Animator animator = new Animator();
 
     public MainScreen(FightingGame fg) {
         parent = fg;
         contactListener = new GameContactListener(this);
         background = new Texture("images/bg1.jpg");
+        animator.create();
+        mapSprite = new Sprite(new Texture(Gdx.files.internal("images/bg1.jpg")));
+        mapSprite.setSize(900f * 16/9, 900);
     }
 
     @Override
@@ -55,7 +63,7 @@ public class MainScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
         world.setContactListener(contactListener);
 
-        camera = new OrthographicCamera(WORLD_HEIGHT * 16/9, WORLD_HEIGHT);
+        camera = new OrthographicCamera(WORLD_WIDTH * 16/9, WORLD_HEIGHT);
         sb = new SpriteBatch();
         sb.setProjectionMatrix(camera.combined);
 
@@ -77,6 +85,8 @@ public class MainScreen implements Screen {
 
         player2 = new Player(p2, 5, 0, p2cs, 2);
         player1 = new Player(p1, -5, 0, p1cs, 1);
+
+
     }
 
     @Override
@@ -86,6 +96,8 @@ public class MainScreen implements Screen {
 
         debugRenderer.render(world, camera.combined);
         sb.begin();
+//        mapSprite.draw(sb);
+        animator.render(sb);
         player1.update(sb);
         player2.update(sb);
         sb.end();
@@ -116,6 +128,7 @@ public class MainScreen implements Screen {
     public void dispose() {
         world.dispose();
         debugRenderer.dispose();
+        animator.dispose();
     }
 
     public void endGame() {
@@ -125,7 +138,7 @@ public class MainScreen implements Screen {
     public void createBounds() {
         //WORLD_HEIGHT * 16/9 / 2f, WORLD_HEIGHT/2f
         float halfWorldWidth = WORLD_HEIGHT * camera.viewportWidth / camera.viewportHeight / 2f,
-                halfWorldHeight = WORLD_HEIGHT / 2f;
+                halfWorldHeight = WORLD_HEIGHT / 2f - WORLD_HEIGHT / 10;
         createWorldBounds(halfWorldWidth, halfWorldHeight, world);
     }
 

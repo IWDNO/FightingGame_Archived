@@ -9,7 +9,8 @@ public abstract class Character {
     public static final int Q_ATTACK = 3;
 
     public abstract Body createPlayer(float x, float y);
-    public abstract void useNormalAttack(Body player);
+
+    public abstract void useNormalAttack(Body player, boolean facingDirection);
     public abstract void useE(Body player);
     public abstract void useQ(Body player);
     public abstract float generateDamage(int attackType);

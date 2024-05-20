@@ -21,18 +21,25 @@ public class GameContactListener implements ContactListener {
     public void beginContact(Contact contact) {
 //        Fixture fa = contact.getFixtureA();
 //        Fixture fb = contact.getFixtureB();
-//        System.out.println(fa.getBody().getUserData() + " + " + fb.getBody().getUserData());
+////        System.out.println(fa.getBody().getUserData() + " + " + fb.getBody().getUserData());
 
         if (check(contact, "Player1-attack", "Player2")) {
             Player player1 = parent.player1, player2 = parent.player2;
             float damage = player1.generateDamage(Character.NORMAL_ATTACK);
-            player2.takeDamage(damage);
+
+            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-attack") ?
+                    contact.getFixtureA().getBody().getPosition() : contact.getFixtureB().getBody().getPosition();
+            player2.takeDamage(damage, hitPosition);
+
             System.out.println(player1.currentHealth + "\t" + player2.currentHealth);
 
         } else if (check(contact, "Player2-attack", "Player1")) {
             Player player1 = parent.player1, player2 = parent.player2;
             float damage = player2.generateDamage(Character.NORMAL_ATTACK);
-            player1.takeDamage(damage);
+
+            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-attack") ?
+                    contact.getFixtureA().getBody().getPosition() : contact.getFixtureB().getBody().getPosition();
+            player1.takeDamage(damage, hitPosition);
             System.out.println(player1.currentHealth + "\t" + player2.currentHealth);
 
         }
