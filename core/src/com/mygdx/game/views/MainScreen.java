@@ -96,7 +96,7 @@ public class MainScreen implements Screen {
 
         debugRenderer.render(world, camera.combined);
         sb.begin();
-//        mapSprite.draw(sb);
+        mapSprite.draw(sb);
         animator.render(sb);
         player1.update(sb);
         player2.update(sb);
