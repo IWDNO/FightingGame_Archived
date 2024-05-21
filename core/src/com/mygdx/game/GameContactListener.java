@@ -20,9 +20,9 @@ public class GameContactListener implements ContactListener {
     @Override
     public void beginContact(Contact contact) {
 
-        Fixture fa = contact.getFixtureA();
-        Fixture fb = contact.getFixtureB();
-        System.out.println(fa.getBody().getUserData() + " + " + fb.getBody().getUserData());
+//        Fixture fa = contact.getFixtureA();
+//        Fixture fb = contact.getFixtureB();
+//        System.out.println(fa.getBody().getUserData() + " + " + fb.getBody().getUserData());
 
         if (check(contact, "Player1-attack", "Player2")) {
             Player player1 = parent.player1, player2 = parent.player2;

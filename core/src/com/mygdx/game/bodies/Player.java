@@ -56,8 +56,8 @@ public class Player {
 
 
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+        float w = 1600;
+        float h = 900;
         float width = 900f / 20f * 16f / 9f * 2.5f; //FIXME временно 5x
         float height = 900f / 10f * 2.5f;
         if (isFacingRight)

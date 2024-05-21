@@ -51,10 +51,11 @@ public class MainScreen implements Screen {
     public MainScreen(FightingGame fg) {
         parent = fg;
         contactListener = new GameContactListener(this);
-        background = new Texture("images/bg1.jpg");
+
         animator.create();
-        mapSprite = new Sprite(new Texture(Gdx.files.internal("images/bg1.jpg")));
-        mapSprite.setSize(900f * 16/9, 900);
+        mapSprite = new Sprite(new Texture(Gdx.files.internal("images/bg.png")));
+        mapSprite.setSize(36f, 20f);
+        mapSprite.setPosition(-18,-10);
     }
 
     @Override
@@ -79,12 +80,13 @@ public class MainScreen implements Screen {
         Gdx.input.setInputProcessor(controller);
 
         createBounds();
-        createCube(-10, -7, 2, 2);
+        createPlatforms();
+
         TestCharacter p1 = new TestCharacter(world, 1, this);
         TestCharacter p2 = new TestCharacter(world, 2, this);
 
-        player2 = new Player(p2, 5, 0, p2cs, 2);
-        player1 = new Player(p1, -5, 0, p1cs, 1);
+        player1 = new Player(p1, -15, -2, p1cs, 1);
+        player2 = new Player(p2, 15, -2, p2cs, 2);
 
 
     }
@@ -96,7 +98,14 @@ public class MainScreen implements Screen {
 
         debugRenderer.render(world, camera.combined);
         sb.begin();
-//        mapSprite.draw(sb);
+        mapSprite.draw(sb);
+        Texture platform = new Texture("map/platform.png");
+        sb.draw(platform, 0, 260, 190, 25);
+        sb.draw(platform, 1600, 260, -190, 25);
+        sb.draw(platform, 800, 390, -320, 30);
+        sb.draw(platform, 800, 390, 320, 30);
+
+
         animator.render(sb);
         player1.update(sb);
         player2.update(sb);
@@ -106,7 +115,6 @@ public class MainScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override
@@ -142,24 +150,44 @@ public class MainScreen implements Screen {
         createWorldBounds(halfWorldWidth, halfWorldHeight, world);
     }
 
-    private void createCube(float x, float y, float width, float height) {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(x, y);
+    private void createPlatforms() {
+        // Массив позиций платформ
+        Vector2[] positions = {
+                new Vector2(-17, -4),
+                new Vector2(17, -4),
+                new Vector2(0, -1)
+        };
 
-        Body boxBody = world.createBody(bodyDef);
-        boxBody.setUserData("enemy");
+        float[] widths = {
+                7,
+                7,
+                14
+        };
 
-        PolygonShape boxShape = new PolygonShape();
-        boxShape.setAsBox(width / 2, height / 2);
+        // Создание фикстуры платформы (общая для всех платформ)
+        FixtureDef platformFixtureDef = new FixtureDef();
 
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = boxShape;
-        fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.3f;
+        for (int i = 0; i < positions.length; i++) {
+            // Создание формы платформы
+            PolygonShape platformShape = new PolygonShape();
+            platformShape.setAsBox(widths[i] / 2f, .5f / 2f);
 
-        boxBody.createFixture(fixtureDef);
-        boxShape.dispose();
+            // Настройка фикстуры
+            platformFixtureDef.shape = platformShape;
+
+            // Создание тела платформы
+            BodyDef platformDef = new BodyDef();
+            platformDef.position.set(positions[i]);
+            platformDef.type = BodyDef.BodyType.StaticBody;
+            Body platformBody = world.createBody(platformDef);
+
+            // Создание фикстуры платформы
+            platformBody.createFixture(platformFixtureDef);
+
+            // Удаление формы платформы
+            platformShape.dispose();
+        }
     }
+
 
 }

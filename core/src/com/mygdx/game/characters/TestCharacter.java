@@ -18,7 +18,7 @@ public class TestCharacter extends Character {
     public static final float ATK = 100;
     public static final float DEF_SCALE = .1f;
     public static final float NORMAL_ATTACK_SCALE = .75f;
-    public static final float E_ATTACK_SCALE = 1f;
+    public static final float E_ATTACK_SCALE = 1.25f;
     public static final float Q_ATTACK_SCALE = 1f;
 
     private final World world;
