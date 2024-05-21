@@ -44,6 +44,7 @@ public class TestCharacter extends Character {
     protected static Animation<TextureRegion> attack2Animation;
     protected static Animation<TextureRegion> dashAnimation;
     protected static Animation<TextureRegion> jumpDashAnimation;
+    protected static Animation<TextureRegion> deathAnimation;
 
     public float getAttackCount() {
         return attackCount;
@@ -64,6 +65,9 @@ public class TestCharacter extends Character {
     public float getMaxHp() {
         return MAX_HP;
     }
+    public float getDeathAnimationTime() {
+        return  1.2f;
+    }
 
     protected void setAnimations() {
         idleAnimation = AnimationFactory.create(6, .1f, 1, "images/Wizard Pack/Idle.png");
@@ -74,7 +78,8 @@ public class TestCharacter extends Character {
         attack1Animation = AnimationFactory.create(8,.1f, 1, "images/Wizard Pack/Attack1.png");
         attack2Animation = AnimationFactory.create(8, .1f,1, "images/Wizard Pack/Attack2.png");
         dashAnimation = AnimationFactory.create(8, .1f,1, "images/Wizard Pack/Dash.png");
-        jumpDashAnimation = AnimationFactory.create(2, .1f,1, "images/Wizard Pack/JumpDash.png");
+        jumpDashAnimation = AnimationFactory.create(2, .1f, 1, "images/Wizard Pack/JumpDash.png");
+        deathAnimation = AnimationFactory.create(6,.1f, 1, "images/Wizard Pack/Death.png");
     }
 
     public TestCharacter(World world, int playerNumber, MainScreen screen) {
@@ -103,6 +108,8 @@ public class TestCharacter extends Character {
                 return dashAnimation;
             case PlayerStates.JUMP_DASH:
                 return jumpDashAnimation;
+            case PlayerStates.DEATH:
+                return deathAnimation;
             default:
                 return idleAnimation;
         }
@@ -191,7 +198,7 @@ public class TestCharacter extends Character {
         damageWriter.spawn(hitPosition, damage);
 
         if (currentHealth <= 0) {
-            screen.endGame();
+            currentHealth = 0;
         }
     }
 

@@ -45,6 +45,7 @@ public class Huntress extends TestCharacter {
     protected static Animation<TextureRegion> attack2Animation;
     protected static Animation<TextureRegion> dashAnimation;
     protected static Animation<TextureRegion> jumpDashAnimation;
+    protected static Animation<TextureRegion> deathAnimation;
 
     public float getAttackCount() {
         return attackCount;
@@ -65,6 +66,9 @@ public class Huntress extends TestCharacter {
     public float getMaxHp() {
         return MAX_HP;
     }
+    public float getDeathAnimationTime() {
+        return  1.6f;
+    }
     protected void setAnimations() {
         idleAnimation = AnimationFactory.create(8,.1f, 1, "images/Huntress/Idle.png");
         runAnimation = AnimationFactory.create(8,.1f, 1, "images/Huntress/Run.png");
@@ -75,6 +79,7 @@ public class Huntress extends TestCharacter {
         attack2Animation = AnimationFactory.create(5,.1f, 1, "images/Huntress/Attack2.png");
         dashAnimation = AnimationFactory.create(8,.1f, 1, "images/Huntress/Dash.png");
         jumpDashAnimation = AnimationFactory.create(2,.1f, 1, "images/Huntress/JumpDash.png");
+        deathAnimation = AnimationFactory.create(8,.2f, 1, "images/Huntress/Death.png");
     }
 
     public Huntress(World world, int playerNumber, MainScreen screen) {
@@ -104,6 +109,8 @@ public class Huntress extends TestCharacter {
                 return dashAnimation;
             case PlayerStates.JUMP_DASH:
                 return jumpDashAnimation;
+            case PlayerStates.DEATH:
+                return deathAnimation;
             default:
                 return idleAnimation;
         }
@@ -192,7 +199,7 @@ public class Huntress extends TestCharacter {
         damageWriter.spawn(hitPosition, damage);
 
         if (currentHealth <= 0) {
-            screen.endGame();
+            currentHealth = 0;
         }
     }
 

@@ -45,6 +45,7 @@ public class SaiHan extends TestCharacter {
     protected static Animation<TextureRegion> attack2Animation;
     protected static Animation<TextureRegion> dashAnimation;
     protected static Animation<TextureRegion> jumpDashAnimation;
+    protected static Animation<TextureRegion> deathAnimation;
 
     public float getAttackCount() {
         return attackCount;
@@ -65,6 +66,9 @@ public class SaiHan extends TestCharacter {
     public float getMaxHp() {
         return MAX_HP;
     }
+    public float getDeathAnimationTime() {
+        return  1.4f;
+    }
     protected void setAnimations() {
         idleAnimation = AnimationFactory.create(4,.1f, 1, "images/Sprites saihan/Idle.png");
         runAnimation = AnimationFactory.create(8,.1f, 1, "images/Sprites saihan/Run.png");
@@ -75,6 +79,7 @@ public class SaiHan extends TestCharacter {
         attack2Animation = AnimationFactory.create(4,.1f, 1, "images/Sprites saihan/Attack2.png");
         dashAnimation = AnimationFactory.create(8,.1f, 1, "images/Sprites saihan/Dash.png");
         jumpDashAnimation = AnimationFactory.create(2,.1f, 1, "images/Sprites saihan/JumpDash.png");
+        deathAnimation = AnimationFactory.create(7,.2f, 1, "images/Sprites saihan/Death.png");
     }
 
     public SaiHan(World world, int playerNumber, MainScreen screen) {
@@ -104,6 +109,8 @@ public class SaiHan extends TestCharacter {
                 return dashAnimation;
             case PlayerStates.JUMP_DASH:
                 return jumpDashAnimation;
+            case PlayerStates.DEATH:
+                return deathAnimation;
             default:
                 return idleAnimation;
         }
@@ -192,7 +199,7 @@ public class SaiHan extends TestCharacter {
         damageWriter.spawn(hitPosition, damage);
 
         if (currentHealth <= 0) {
-            screen.endGame();
+            currentHealth = 0;
         }
     }
 

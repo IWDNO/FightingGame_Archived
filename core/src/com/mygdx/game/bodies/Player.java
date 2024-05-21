@@ -35,6 +35,7 @@ public class Player {
     private int state = PlayerStates.IDLE;
     private Animation<TextureRegion> currentAnimation;
     private boolean block_animation = false;
+    private boolean isDead;
 
 
     public Player (TestCharacter character, float x, float y, ControlScheme cs, int playerNumber) {
@@ -50,9 +51,28 @@ public class Player {
     }
 
     public void update(SpriteBatch sb) {
-        updateFacingDirection();
+        if (isDead || character.getHP() <= 0) {
+            if (stateTime < character.getDeathAnimationTime()) stateTime += Gdx.graphics.getDeltaTime();
+            setAnimation();
+            TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, false);
+            float w = 1600;
+            float h = 900;
+            float width = 900f / 20f * 16f / 9f * character.getZoom() + w/10; //FIXME временно 5x
+            float height = 900f / 10f * character.getZoom();
+            if (isFacingRight)
+                sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 - width/2,
+                        h/2 + player.getPosition().y * h/20 - height/2,
+                        width, height);
+            else
+                sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 + width/2,
+                        h/2 + player.getPosition().y * h/20 - height/2,
+                        -width, height);
+            return;
+        }
 
         stateTime += Gdx.graphics.getDeltaTime();
+        updateFacingDirection();
+
         setAnimation();
 
 
@@ -70,9 +90,6 @@ public class Player {
                     h/2 + player.getPosition().y * h/20 - height/2,
                     -width, height);
 
-        playerSprite.setPosition(player.getPosition().x - playerSprite.getWidth() / 2,
-                player.getPosition().y - playerSprite.getHeight() / 2);
-        playerSprite.draw(sb);
 
         character.update(sb);
 
@@ -80,6 +97,8 @@ public class Player {
     }
 
     public void handleInput() {
+        if (isDead) return;
+
         Timer timer = new Timer();
 
         // left and right
@@ -213,14 +232,11 @@ public class Player {
         damage.damage = isDashing ? damage.damage / 2 : damage.damage;
         character.takeDamage(damage, hitPosition);
         currentHealth = character.getHP();
-
-        playerSprite.setColor(1,0,0,1);
-        new Timer().scheduleTask(new Timer.Task(){
-            @Override
-            public void run() {
-                playerSprite.setColor(1,1,1,1);
-            }
-        }, 0.1f);
+        if (currentHealth <= 0) {
+            stateTime = 0f;
+            state = PlayerStates.DEATH;
+            isDead = true;
+        }
     }
 
     public void setAnimation() {

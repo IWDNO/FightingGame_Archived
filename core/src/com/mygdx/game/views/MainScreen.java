@@ -13,15 +13,8 @@ import com.mygdx.game.FightingGame;
 import com.mygdx.game.GameContactListener;
 import com.mygdx.game.animator.Animator;
 import com.mygdx.game.bodies.Player;
-import com.mygdx.game.characters.Character;
-import com.mygdx.game.characters.Huntress;
-import com.mygdx.game.characters.SaiHan;
-import com.mygdx.game.characters.TestCharacter;
+import com.mygdx.game.characters.*;
 import com.mygdx.game.controller.ControlScheme;
-import com.mygdx.game.controller.InputController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.badlogic.gdx.Input.Keys.W;
 import static com.mygdx.game.BodyFactory.BodyFactory.createWorldBounds;
@@ -45,9 +38,9 @@ public class MainScreen implements Screen {
     public Player player1;
     public Player player2;
     private ControlScheme p1cs = new ControlScheme(
-            Input.Keys.A, Input.Keys.D, W, Input.Keys.V, Input.Keys.Z, Input.Keys.X, Input.Keys.C);
+            Input.Keys.A, Input.Keys.D, W, Input.Keys.SHIFT_LEFT, Input.Keys.Z, Input.Keys.X, Input.Keys.C);
     private ControlScheme p2cs = new ControlScheme(
-            Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.PERIOD, Input.Keys.COMMA);
+            Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.SHIFT_RIGHT, Input.Keys.SLASH, Input.Keys.PERIOD, Input.Keys.COMMA);
 
     private Texture platform = new Texture("map/platform.png");
     private Animator animator = new Animator();
@@ -93,8 +86,8 @@ public class MainScreen implements Screen {
         createBounds();
         createPlatforms();
 
-        TestCharacter p1 = new Huntress(world, 1, this);
-        TestCharacter p2 = new SaiHan(world, 2, this);
+        TestCharacter p1 = new HeroKnight(world, 1, this);
+        TestCharacter p2 = new King(world, 2, this);
 
         player1 = new Player(p1, -15, -2, p1cs, 1);
         player2 = new Player(p2, 15, -2, p2cs, 2);
