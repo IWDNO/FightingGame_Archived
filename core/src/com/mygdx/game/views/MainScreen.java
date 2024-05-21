@@ -13,6 +13,7 @@ import com.mygdx.game.GameContactListener;
 import com.mygdx.game.animator.Animator;
 import com.mygdx.game.bodies.Player;
 import com.mygdx.game.characters.Character;
+import com.mygdx.game.characters.Huntress;
 import com.mygdx.game.characters.SaiHan;
 import com.mygdx.game.characters.TestCharacter;
 import com.mygdx.game.controller.ControlScheme;
@@ -83,7 +84,7 @@ public class MainScreen implements Screen {
         createBounds();
         createPlatforms();
 
-        TestCharacter p1 = new TestCharacter(world, 1, this);
+        TestCharacter p1 = new Huntress(world, 1, this);
         TestCharacter p2 = new SaiHan(world, 2, this);
 
         player1 = new Player(p1, -15, -2, p1cs, 1);
@@ -99,7 +100,7 @@ public class MainScreen implements Screen {
 
         debugRenderer.render(world, camera.combined);
         sb.begin();
-//        mapSprite.draw(sb);
+        mapSprite.draw(sb);
         Texture platform = new Texture("map/platform.png");
         sb.draw(platform, 0, 260, 190, 25);
         sb.draw(platform, 1600, 260, -190, 25);

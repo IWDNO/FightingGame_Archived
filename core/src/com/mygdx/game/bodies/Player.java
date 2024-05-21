@@ -58,7 +58,7 @@ public class Player {
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         float w = 1600;
         float h = 900;
-        float width = 900f / 20f * 16f / 9f * character.getZoom(); //FIXME временно 5x
+        float width = 900f / 20f * 16f / 9f * character.getZoom() + w/10; //FIXME временно 5x
         float height = 900f / 10f * character.getZoom();
         if (isFacingRight)
         sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 - width/2,
@@ -205,7 +205,7 @@ public class Player {
             public void run() {
                 currentAnimation = character.getAnimation(PlayerStates.IDLE);
             }
-        }, 0.4f);
+        }, 0.3f);
 
         damage = isDashing ? damage / 2 : damage;
         character.takeDamage(damage, hitPosition);
