@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.utils.DamageResult;
 
 import java.util.Random;
 
@@ -21,7 +22,7 @@ public class DamageText {
         this.playerNumber = playerNumber;
     }
 
-    public void spawn(Vector2 position, float damage) {
+    public void spawn(Vector2 position, DamageResult damage) {
         instances.add(new DamageTextInstance(position, damage, playerNumber));
     }
 
@@ -38,10 +39,10 @@ public class DamageText {
     private static class DamageTextInstance {
         private final int playerNumber;
         private Vector2 position;
-        private float damage;
+        private DamageResult damage;
         private float lifeTime;
 
-        public DamageTextInstance(Vector2 position, float damage, int playerNumber) {
+        public DamageTextInstance(Vector2 position, DamageResult damage, int playerNumber) {
             Random random = new Random();
             float w = 1600;
             float h = 900;
@@ -59,13 +60,37 @@ public class DamageText {
             lifeTime += Gdx.graphics.getDeltaTime();
 
             float alpha = 1 - (lifeTime / MAX_LIFE_TIME);
+//            if (playerNumber == 1) {
+//                font.setColor(1, 0, 0, alpha); // Red color for player 1
+//            } else {
+//                font.setColor(0, 0, 1, alpha); // Blue color for player 2
+//            }
+
+            // Устанавливаем масштабирование шрифта для создания обводки
+
+            // Отрисовываем текст черным цветом для создания обводки
+            font.setColor(0, 0, 0, alpha);
+            font.getData().setScale(1.1f, 1.1f); // Увеличиваем размер шрифта в 2 раза
+            if (damage.isCritical) {
+                font.draw(batch, "Crit", position.x, position.y + 40);
+                font.getData().setScale(1.6f);
+            }
+            font.draw(batch, String.valueOf((int) damage.damage), position.x, position.y);
+
+            // Сбрасываем масштабирование шрифта к нормальному значению
+            font.getData().setScale(1f, 1f);
+
+            // Отрисовываем текст нужным цветом
             if (playerNumber == 1) {
                 font.setColor(1, 0, 0, alpha); // Red color for player 1
             } else {
                 font.setColor(0, 0, 1, alpha); // Blue color for player 2
             }
-
-            font.draw(batch, String.valueOf((int) damage), position.x, position.y);
+            if (damage.isCritical) {
+                font.draw(batch, "Crit", position.x, position.y + 40);
+                font.getData().setScale(1.5f);
+            }
+            font.draw(batch, String.valueOf((int) damage.damage), position.x, position.y);
         }
 
         public boolean isExpired() {

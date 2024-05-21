@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.animator.DamageText;
+import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.utils.PlayerStates;
 import com.mygdx.game.views.MainScreen;
 
@@ -59,6 +60,9 @@ public class TestCharacter extends Character {
 
     public float geteAttackDelay() {
         return 0.8f;
+    }
+    public float getMaxHp() {
+        return MAX_HP;
     }
 
     protected void setAnimations() {
@@ -180,11 +184,11 @@ public class TestCharacter extends Character {
     }
 
     @Override
-    public void takeDamage(float damage, Vector2 hitPosition) {
-        float final_damage = (damage - (damage * DEF_SCALE));
-        currentHealth -= final_damage;
+    public void takeDamage(DamageResult damage, Vector2 hitPosition) {
+        damage.damage = (damage.damage - (damage.damage * DEF_SCALE));
+        currentHealth -= damage.damage;
 
-        damageWriter.spawn(hitPosition, final_damage);
+        damageWriter.spawn(hitPosition, damage);
 
         if (currentHealth <= 0) {
             screen.endGame();

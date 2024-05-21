@@ -7,6 +7,7 @@ import com.mygdx.game.characters.Character;
 
 import com.badlogic.ashley.core.Entity;
 import com.mygdx.game.bodies.Player;
+import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.views.MainScreen;
 
 public class GameContactListener implements ContactListener {
@@ -26,7 +27,7 @@ public class GameContactListener implements ContactListener {
 
         if (check(contact, "Player1-attack", "Player2")) {
             Player player1 = parent.player1, player2 = parent.player2;
-            float damage = player1.generateDamage(Character.NORMAL_ATTACK);
+            DamageResult damage = player1.generateDamage(Character.NORMAL_ATTACK);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-attack") ?
                     contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
@@ -34,7 +35,7 @@ public class GameContactListener implements ContactListener {
 
         } else if (check(contact, "Player2-attack", "Player1")) {
             Player player1 = parent.player1, player2 = parent.player2;
-            float damage = player2.generateDamage(Character.NORMAL_ATTACK);
+            DamageResult damage = player2.generateDamage(Character.NORMAL_ATTACK);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-attack") ?
                     contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
@@ -44,7 +45,7 @@ public class GameContactListener implements ContactListener {
 
         if (check(contact, "Player1-eAttack", "Player2")) {
             Player player1 = parent.player1, player2 = parent.player2;
-            float damage = player1.generateDamage(Character.E_ATTACK);
+            DamageResult damage = player1.generateDamage(Character.E_ATTACK);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-eAttack") ?
                     contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
@@ -52,7 +53,7 @@ public class GameContactListener implements ContactListener {
 
         } else if (check(contact, "Player2-eAttack", "Player1")) {
             Player player1 = parent.player1, player2 = parent.player2;
-            float damage = player2.generateDamage(Character.E_ATTACK);
+            DamageResult damage = player2.generateDamage(Character.E_ATTACK);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-eAttack") ?
                     contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();

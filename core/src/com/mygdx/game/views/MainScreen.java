@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.FightingGame;
@@ -22,6 +23,7 @@ import com.mygdx.game.controller.InputController;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.badlogic.gdx.Input.Keys.W;
 import static com.mygdx.game.BodyFactory.BodyFactory.createWorldBounds;
 
 public class MainScreen implements Screen {
@@ -43,12 +45,15 @@ public class MainScreen implements Screen {
     public Player player1;
     public Player player2;
     private ControlScheme p1cs = new ControlScheme(
-            Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.V, Input.Keys.Z, Input.Keys.X, Input.Keys.C);
+            Input.Keys.A, Input.Keys.D, W, Input.Keys.V, Input.Keys.Z, Input.Keys.X, Input.Keys.C);
     private ControlScheme p2cs = new ControlScheme(
-            Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.COMMA, Input.Keys.PERIOD);
+            Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.PERIOD, Input.Keys.COMMA);
 
-    private Texture background;
+    private Texture platform = new Texture("map/platform.png");
     private Animator animator = new Animator();
+    private Texture texture;
+    private TextureRegion healthRegion;
+    private TextureRegion healthOutline;
 
     public MainScreen(FightingGame fg) {
         parent = fg;
@@ -58,6 +63,10 @@ public class MainScreen implements Screen {
         mapSprite = new Sprite(new Texture(Gdx.files.internal("images/bg.png")));
         mapSprite.setSize(36f, 20f);
         mapSprite.setPosition(-18,-10);
+
+        texture = new Texture("images/HealthBar.png");
+        healthRegion = new TextureRegion(texture,0,0, 10, 80);
+        healthOutline = new TextureRegion(texture,26,0, 10, 80);
     }
 
     @Override
@@ -100,8 +109,9 @@ public class MainScreen implements Screen {
 
         debugRenderer.render(world, camera.combined);
         sb.begin();
+
+
         mapSprite.draw(sb);
-        Texture platform = new Texture("map/platform.png");
         sb.draw(platform, 0, 260, 190, 25);
         sb.draw(platform, 1600, 260, -190, 25);
         sb.draw(platform, 800, 390, -320, 30);
@@ -111,6 +121,17 @@ public class MainScreen implements Screen {
         animator.render(sb);
         player1.update(sb);
         player2.update(sb);
+
+        // player1 hp
+        float height = player1.getCurrentHealth() * 200 / player1.getMaxHP();
+        sb.draw(healthOutline, 25, 650, 25, 200);
+        sb.draw(healthRegion, 25, 650, 25, height);
+
+        // player2 hp
+        height = player2.getCurrentHealth() * 200 / player2.getMaxHP();
+        sb.draw(healthOutline, 1575-25, 650, 25, 200);
+        sb.draw(healthRegion, 1575-25, 650, 25, height);
+
         sb.end();
         world.step(1/60f, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
     }

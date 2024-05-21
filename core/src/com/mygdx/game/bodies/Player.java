@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.characters.Character;
 import com.mygdx.game.characters.TestCharacter;
 import com.mygdx.game.controller.ControlScheme;
+import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.utils.PlayerStates;
 
 public class Player {
@@ -192,11 +193,13 @@ public class Player {
         playerSprite.setFlip(!isFacingRight, false);
     }
 
-    public float generateDamage(int attackType) {
-        return character.generateDamage(attackType);
+    public DamageResult generateDamage(int attackType) {
+        boolean isCritical = player.getLinearVelocity().y < 0;
+        float damage = isCritical ? character.generateDamage(attackType) * 2 : character.generateDamage(attackType);
+        return new DamageResult(damage, isCritical);
     }
 
-    public void takeDamage(float damage, Vector2 hitPosition) {
+    public void takeDamage(DamageResult damage, Vector2 hitPosition) {
         stateTime = 0f;
         currentAnimation = character.getAnimation(PlayerStates.HIT);
         Timer timer = new Timer();
@@ -207,7 +210,7 @@ public class Player {
             }
         }, 0.3f);
 
-        damage = isDashing ? damage / 2 : damage;
+        damage.damage = isDashing ? damage.damage / 2 : damage.damage;
         character.takeDamage(damage, hitPosition);
         currentHealth = character.getHP();
 
@@ -227,5 +230,12 @@ public class Player {
 
 
         currentAnimation = character.getAnimation(state);
+    }
+
+    public float getCurrentHealth() {
+        return currentHealth;
+    }
+    public float getMaxHP() {
+        return character.getMaxHp();
     }
 }

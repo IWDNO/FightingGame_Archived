@@ -9,13 +9,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.animator.DamageText;
+import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.utils.PlayerStates;
 import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
 public class Huntress extends TestCharacter {
-    public static final float MAX_HP = 10000;
+    public static final float MAX_HP = 1000;
     public static final float ATK = 100;
     public static final float DEF_SCALE = .1f;
     public static final float NORMAL_ATTACK_SCALE = .55f;
@@ -25,7 +26,7 @@ public class Huntress extends TestCharacter {
     private final World world;
     private final MainScreen screen;
 
-    private final float attackDelay = 0.4f;
+    private final float attackDelay = 0.5f;
     private final float eAttackDelay = 5f;
     private final int playerNumber;
     public float attackCount = 0;
@@ -60,6 +61,9 @@ public class Huntress extends TestCharacter {
 
     public float geteAttackDelay() {
         return 0.8f;
+    }
+    public float getMaxHp() {
+        return MAX_HP;
     }
     protected void setAnimations() {
         idleAnimation = AnimationFactory.create(8,.1f, 1, "images/Huntress/Idle.png");
@@ -129,7 +133,7 @@ public class Huntress extends TestCharacter {
                         public void run() {
                             world.destroyBody(attack);
                         }
-                    }, 0.8f);
+                    }, 0.3f);
                     timer.scheduleTask(new Timer.Task() {
                         @Override
                         public void run() {
@@ -181,16 +185,17 @@ public class Huntress extends TestCharacter {
     }
 
     @Override
-    public void takeDamage(float damage, Vector2 hitPosition) {
-        float final_damage = (damage - (damage * DEF_SCALE));
-        currentHealth -= final_damage;
+    public void takeDamage(DamageResult damage, Vector2 hitPosition) {
+        damage.damage = (damage.damage - (damage.damage * DEF_SCALE));
+        currentHealth -= damage.damage;
 
-        damageWriter.spawn(hitPosition, final_damage);
+        damageWriter.spawn(hitPosition, damage);
 
         if (currentHealth <= 0) {
             screen.endGame();
         }
     }
+
 
     @Override
     public float getHP() {
