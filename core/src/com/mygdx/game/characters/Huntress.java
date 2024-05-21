@@ -32,7 +32,7 @@ public class Huntress extends TestCharacter {
     public float attackCount = 0;
     public float eAttackCount = 0;
     private float currentHealth = MAX_HP;
-    private float zoom = 6f;
+    private float zoom = 5.5f;
 
     private DamageText damageWriter;
 
