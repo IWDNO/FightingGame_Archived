@@ -47,7 +47,7 @@ public class DamageText {
             float h = 900;
             this.position = new Vector2(
                     w/2 + position.x * w/20 * 9/16 + (random.nextInt(16) - 10) * w/500,
-                    h/2 + position.y * h/20 + h/10
+                    h/2 + position.y * h/20 + h/7
             );
 
             this.playerNumber = playerNumber;

@@ -11,7 +11,7 @@ public class BodyFactory {
         bodyDef.fixedRotation = true;
 
         PolygonShape boxShape = new PolygonShape();
-        float height = 1f;
+        float height = 1.5f;
         boxShape.setAsBox(height / 2f, height);
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -36,7 +36,28 @@ public class BodyFactory {
     public static Body createDefaultAttack(float x,  float y, float radius, World world, boolean isFacingRight) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(isFacingRight ? x + 1f : x - 1f, y);
+        bodyDef.position.set(isFacingRight ? x + 2f : x - 2f, y);
+
+        Body sensorBody = world.createBody(bodyDef);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        CircleShape circleShape = new CircleShape();
+        circleShape.setRadius(radius);
+
+        fixtureDef.isSensor = true;
+        fixtureDef.shape = circleShape;
+
+        sensorBody.createFixture(fixtureDef);
+
+        circleShape.dispose();
+
+        return sensorBody;
+    }
+
+    public static Body createDefaultEAttack(float x,  float y, float radius, World world, boolean isFacingRight) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(isFacingRight ? x + 3f : x - 3f, y);
 
         Body sensorBody = world.createBody(bodyDef);
 

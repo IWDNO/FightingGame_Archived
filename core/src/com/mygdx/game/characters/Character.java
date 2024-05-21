@@ -12,7 +12,7 @@ public abstract class Character {
     public abstract Body createPlayer(float x, float y);
 
     public abstract void useNormalAttack(Body player, boolean facingDirection);
-    public abstract void useE(Body player);
+    public abstract void useE(Body player, boolean facingDirection);
     public abstract void useQ(Body player);
     public abstract float generateDamage(int attackType);
     public abstract void takeDamage(float damage, Vector2 hitPosition);

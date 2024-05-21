@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.animator.DamageText;
@@ -13,24 +14,24 @@ import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
-public class TestCharacter extends Character {
-    public static final float MAX_HP = 1000;
+public class SaiHan extends TestCharacter {
+    public static final float MAX_HP = 10000;
     public static final float ATK = 100;
     public static final float DEF_SCALE = .1f;
-    public static final float NORMAL_ATTACK_SCALE = .75f;
+    public static final float NORMAL_ATTACK_SCALE = .55f;
     public static final float E_ATTACK_SCALE = 1.25f;
     public static final float Q_ATTACK_SCALE = 1f;
-    private float zoom = 3.2f;
 
     private final World world;
     private final MainScreen screen;
 
-    private final float attackDelay = 0.7f;
+    private final float attackDelay = 0.4f;
     private final float eAttackDelay = 5f;
     private final int playerNumber;
-    private float attackCount = 0;
-    private float eAttackCount = 0;
+    public float attackCount = 0;
+    public float eAttackCount = 0;
     private float currentHealth = MAX_HP;
+    private float zoom = 6f;
 
     private DamageText damageWriter;
 
@@ -60,20 +61,20 @@ public class TestCharacter extends Character {
     public float geteAttackDelay() {
         return 0.8f;
     }
-
     protected void setAnimations() {
-        idleAnimation = AnimationFactory.create(6, .1f, 1, "images/Wizard Pack/Idle.png");
-        runAnimation = AnimationFactory.create(8,.1f, 1, "images/Wizard Pack/Run.png");
-        jumpAnimation = AnimationFactory.create(2,.1f, 1, "images/Wizard Pack/Jump.png");
-        fallAnimation = AnimationFactory.create(2,.1f, 1, "images/Wizard Pack/Fall.png");
-        hitAnimation = AnimationFactory.create(4, .1f,1, "images/Wizard Pack/Hit.png");
-        attack1Animation = AnimationFactory.create(8,.1f, 1, "images/Wizard Pack/Attack1.png");
-        attack2Animation = AnimationFactory.create(8, .1f,1, "images/Wizard Pack/Attack2.png");
-        dashAnimation = AnimationFactory.create(8, .1f,1, "images/Wizard Pack/Dash.png");
-        jumpDashAnimation = AnimationFactory.create(2, .1f,1, "images/Wizard Pack/JumpDash.png");
+        idleAnimation = AnimationFactory.create(4,.1f, 1, "images/Sprites saihan/Idle.png");
+        runAnimation = AnimationFactory.create(8,.1f, 1, "images/Sprites saihan/Run.png");
+        jumpAnimation = AnimationFactory.create(2,.1f, 1, "images/Sprites saihan/Jump.png");
+        fallAnimation = AnimationFactory.create(2,.1f, 1, "images/Sprites saihan/Fall.png");
+        hitAnimation = AnimationFactory.create(3,.1f, 1, "images/Sprites saihan/Hit.png");
+        attack1Animation = AnimationFactory.create(4,.1f, 1, "images/Sprites saihan/Attack1.png");
+        attack2Animation = AnimationFactory.create(4,.1f, 1, "images/Sprites saihan/Attack2.png");
+        dashAnimation = AnimationFactory.create(8,.1f, 1, "images/Sprites saihan/Dash.png");
+        jumpDashAnimation = AnimationFactory.create(2,.1f, 1, "images/Sprites saihan/JumpDash.png");
     }
 
-    public TestCharacter(World world, int playerNumber, MainScreen screen) {
+    public SaiHan(World world, int playerNumber, MainScreen screen) {
+        super(world, playerNumber, screen);
         this.world = world;
         this.playerNumber = playerNumber;
         this.screen = screen;
@@ -113,7 +114,7 @@ public class TestCharacter extends Character {
         return player;
     }
 
-    @Override
+
     public void useNormalAttack(Body player, boolean facingDirection) {
         if (attackCount < 1) {
             Timer timer = new Timer();
@@ -141,7 +142,7 @@ public class TestCharacter extends Character {
         }
     }
 
-    @Override
+
     public void useE(Body player, boolean facingDirection) {
         if (eAttackCount < 1) {
             Timer timer = new Timer();
@@ -219,6 +220,4 @@ public class TestCharacter extends Character {
                 return 1f;
         }
     }
-
-
 }

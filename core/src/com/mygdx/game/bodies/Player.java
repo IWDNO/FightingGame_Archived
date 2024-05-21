@@ -58,8 +58,8 @@ public class Player {
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         float w = 1600;
         float h = 900;
-        float width = 900f / 20f * 16f / 9f * 2.5f; //FIXME временно 5x
-        float height = 900f / 10f * 2.5f;
+        float width = 900f / 20f * 16f / 9f * character.getZoom(); //FIXME временно 5x
+        float height = 900f / 10f * character.getZoom();
         if (isFacingRight)
         sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 - width/2,
                 h/2 + player.getPosition().y * h/20 - height/2,
@@ -124,27 +124,30 @@ public class Player {
 
         //attacks
         if (Gdx.input.isKeyJustPressed(cs.attackKey)) {
-            if (character.attackCount < 1) {
-                currentAnimation = character.attack1Animation;
+            if (character.getAttackCount() < 1) {
+                currentAnimation = character.getAnimation(PlayerStates.ATTACK1);
                 stateTime = 0f;
                 timer.scheduleTask(new Timer.Task() {
                     @Override
                     public void run() {
-                        currentAnimation = character.idleAnimation;
+                        currentAnimation = character.getAnimation(PlayerStates.IDLE);
                     }
-                }, .8f);
+                }, character.getAttackDelay());
                 character.useNormalAttack(player, isFacingRight);
             }
         }
         if (Gdx.input.isKeyJustPressed(cs.eKey)) {
-            currentAnimation = character.attack2Animation;
-            timer.scheduleTask(new Timer.Task() {
-                @Override
-                public void run() {
-                    currentAnimation = character.idleAnimation;
-                }
-            }, .6f);
-            character.useE(player);
+            if (character.geteAttackCount() < 1) {
+                currentAnimation = character.getAnimation(PlayerStates.ATTACK2);
+                stateTime = 0f;
+                timer.scheduleTask(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        currentAnimation = character.getAnimation(PlayerStates.IDLE);
+                    }
+                }, character.geteAttackDelay());
+                character.useE(player, isFacingRight);
+            }
         }
         if (Gdx.input.isKeyJustPressed(cs.qkey)) {
             character.useQ(player);
@@ -195,12 +198,12 @@ public class Player {
 
     public void takeDamage(float damage, Vector2 hitPosition) {
         stateTime = 0f;
-        currentAnimation = character.hitAnimation;
+        currentAnimation = character.getAnimation(PlayerStates.HIT);
         Timer timer = new Timer();
         timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
-                currentAnimation = character.idleAnimation;
+                currentAnimation = character.getAnimation(PlayerStates.IDLE);
             }
         }, 0.4f);
 
@@ -218,41 +221,11 @@ public class Player {
     }
 
     public void setAnimation() {
-        if (currentAnimation == character.hitAnimation
-                || currentAnimation == character.attack1Animation
-                || currentAnimation == character.attack2Animation) return;
+        if (currentAnimation == character.getAnimation(PlayerStates.HIT)
+                || currentAnimation == character.getAnimation(PlayerStates.ATTACK1)
+                || currentAnimation == character.getAnimation(PlayerStates.ATTACK2)) return;
 
 
-        switch (state) {
-            case PlayerStates.RUN:
-                currentAnimation = character.runAnimation;
-                break;
-            case PlayerStates.ATTACK1:
-                currentAnimation = character.attack1Animation;
-                break;
-            case PlayerStates.ATTACK2:
-                currentAnimation = character.attack2Animation;
-                break;
-            case PlayerStates.DEATH:
-                break;
-            case PlayerStates.FALL:
-                currentAnimation = character.fallAnimation;
-                break;
-            case PlayerStates.HIT:
-                currentAnimation = character.hitAnimation;
-                break;
-            case PlayerStates.JUMP:
-                currentAnimation = character.jumpAnimation;
-                break;
-            case PlayerStates.DASH:
-                currentAnimation = character.dashAnimation;
-                break;
-            case PlayerStates.JUMP_DASH:
-                currentAnimation = character.jumpDashAnimation;
-                break;
-            default:
-                currentAnimation = character.idleAnimation;
-                break;
-        }
+        currentAnimation = character.getAnimation(state);
     }
 }

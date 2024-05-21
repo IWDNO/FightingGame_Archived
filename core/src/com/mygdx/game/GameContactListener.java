@@ -32,9 +32,6 @@ public class GameContactListener implements ContactListener {
                     contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
             player2.takeDamage(damage, hitPosition);
 
-            System.out.println(player1.currentHealth + "\t" + player2.currentHealth);
-            System.out.println(hitPosition);
-
         } else if (check(contact, "Player2-attack", "Player1")) {
             Player player1 = parent.player1, player2 = parent.player2;
             float damage = player2.generateDamage(Character.NORMAL_ATTACK);
@@ -43,8 +40,24 @@ public class GameContactListener implements ContactListener {
                     contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
             player1.takeDamage(damage, hitPosition);
             System.out.println(player1.currentHealth + "\t" + player2.currentHealth);
-//            System.out.println(hitPosition);
+        }
 
+        if (check(contact, "Player1-eAttack", "Player2")) {
+            Player player1 = parent.player1, player2 = parent.player2;
+            float damage = player1.generateDamage(Character.E_ATTACK);
+
+            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-eAttack") ?
+                    contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
+            player2.takeDamage(damage, hitPosition);
+
+        } else if (check(contact, "Player2-eAttack", "Player1")) {
+            Player player1 = parent.player1, player2 = parent.player2;
+            float damage = player2.generateDamage(Character.E_ATTACK);
+
+            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-eAttack") ?
+                    contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
+            player1.takeDamage(damage, hitPosition);
+            System.out.println(player1.currentHealth + "\t" + player2.currentHealth);
         }
     }
 

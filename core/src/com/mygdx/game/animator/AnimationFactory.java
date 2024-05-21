@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AnimationFactory {
-    public static Animation<TextureRegion> create(int frame_cols, int frame_rows, String path) {
+    public static Animation<TextureRegion> create(int frame_cols, float frameDuration, int frame_rows, String path) {
         Texture sheet = new Texture(Gdx.files.internal(path));
         TextureRegion[][] tmp = TextureRegion.split(sheet,
                 sheet.getWidth() / frame_cols,
@@ -19,6 +19,6 @@ public class AnimationFactory {
             }
         }
 
-        return new Animation<TextureRegion>(.1f, walkFrames);
+        return new Animation<TextureRegion>(frameDuration, walkFrames);
     }
 }
