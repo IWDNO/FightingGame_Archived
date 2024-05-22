@@ -52,6 +52,7 @@ public class Player {
 
     public void update(SpriteBatch sb) {
         if (isDead || character.getHP() <= 0) {
+            player.setLinearVelocity(0, 0);
             if (stateTime < character.getDeathAnimationTime()) stateTime += Gdx.graphics.getDeltaTime();
             setAnimation();
             TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, false);
