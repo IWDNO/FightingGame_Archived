@@ -77,11 +77,11 @@ public class King extends TestCharacter {
         runAnimation = AnimationFactory.create(8,.1f, 1, "images/King/Run.png");
         jumpAnimation = AnimationFactory.create(2,.1f, 1, "images/King/Jump.png");
         fallAnimation = AnimationFactory.create(2,.1f, 1, "images/King/Fall.png");
-        hitAnimation = AnimationFactory.create(4,.1f, 1, "images/King/Take Hit - white silhouette.png");
+        hitAnimation = AnimationFactory.create(4,.1f, 1, "images/King/Take Hit.png");
         attack1Animation = AnimationFactory.create(4,.1f, 1, "images/King/Attack1.png");
         attack2Animation = AnimationFactory.create(4,.1f, 1, "images/King/Attack3.png");
-        dashAnimation = AnimationFactory.create(8,.1f, 1, "images/King/Run.png");
-        jumpDashAnimation = AnimationFactory.create(2,.1f, 1, "images/King/Fall.png");
+        dashAnimation = AnimationFactory.create(8,.1f, 1, "images/King/Dash.png");
+        jumpDashAnimation = AnimationFactory.create(2,.1f, 1, "images/King/JumpDash.png");
         deathAnimation = AnimationFactory.create(6,.2f, 1, "images/King/Death.png");
     }
 

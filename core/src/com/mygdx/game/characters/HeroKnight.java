@@ -80,8 +80,8 @@ public class HeroKnight extends TestCharacter {
         hitAnimation = AnimationFactory.create(4,.1f, 1, "images/HeroKnight/Take Hit.png");
         attack1Animation = AnimationFactory.create(7,.1f, 1, "images/HeroKnight/Attack1.png");
         attack2Animation = AnimationFactory.create(7,.1f, 1, "images/HeroKnight/Attack2.png");
-        dashAnimation = AnimationFactory.create(8,.1f, 1, "images/HeroKnight/Run.png");
-        jumpDashAnimation = AnimationFactory.create(3,.1f, 1, "images/HeroKnight/Fall.png");
+        dashAnimation = AnimationFactory.create(8,.1f, 1, "images/HeroKnight/Dash.png");
+        jumpDashAnimation = AnimationFactory.create(3,.1f, 1, "images/HeroKnight/Jump Dash.png");
         deathAnimation = AnimationFactory.create(11,.2f, 1, "images/HeroKnight/Death.png");
     }
 
