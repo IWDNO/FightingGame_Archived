@@ -17,9 +17,9 @@ import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
 public class SaiHan extends TestCharacter {
     public static final float MAX_HP = 900;
-    public static final float ATK = 100;
-    public static final float DEF_SCALE = .1f;
-    public static final float NORMAL_ATTACK_SCALE = .55f;
+    public static final float ATK = 80;
+    public static final float DEF_SCALE = .06f;
+    public static final float NORMAL_ATTACK_SCALE = .8f;
     public static final float E_ATTACK_SCALE = 1.25f;
     public static final float Q_ATTACK_SCALE = 1f;
 

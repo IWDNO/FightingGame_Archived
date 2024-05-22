@@ -18,11 +18,11 @@ import java.util.Random;
 import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
 public class King extends TestCharacter {
-    public static final float MAX_HP = 900;
-    public static final float ATK = 1010;
-    public static final float DEF_SCALE = .1f;
-    public static final float NORMAL_ATTACK_SCALE = .55f;
-    public static final float E_ATTACK_SCALE = 1.25f;
+    public static final float MAX_HP = 1000;
+    public static final float ATK = 110;
+    public static final float DEF_SCALE = .15f;
+    public static final float NORMAL_ATTACK_SCALE = .7f;
+    public static final float E_ATTACK_SCALE = 1.2f;
     public static final float Q_ATTACK_SCALE = 1f;
 
     private final World world;

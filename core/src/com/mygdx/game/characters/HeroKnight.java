@@ -18,17 +18,17 @@ import java.util.Random;
 import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
 public class HeroKnight extends TestCharacter {
-    public static final float MAX_HP = 900;
+    public static final float MAX_HP = 1000;
     public static final float ATK = 100;
-    public static final float DEF_SCALE = .1f;
-    public static final float NORMAL_ATTACK_SCALE = .55f;
-    public static final float E_ATTACK_SCALE = 1.25f;
+    public static final float DEF_SCALE = .2f;
+    public static final float NORMAL_ATTACK_SCALE = .6f;
+    public static final float E_ATTACK_SCALE = 1.1f;
     public static final float Q_ATTACK_SCALE = 1f;
 
     private final World world;
     private final MainScreen screen;
 
-    private final float attackDelay = 0.4f;
+    private final float attackDelay = 0.7f;
     private final float eAttackDelay = 5f;
     private final int playerNumber;
     public float attackCount = 0;

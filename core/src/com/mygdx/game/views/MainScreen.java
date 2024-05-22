@@ -86,8 +86,8 @@ public class MainScreen implements Screen {
         createBounds();
         createPlatforms();
 
-        TestCharacter p1 = new HeroKnight(world, 1, this);
-        TestCharacter p2 = new SaiHan(world, 2, this);
+        TestCharacter p1 = new King(world, 1, this);
+        TestCharacter p2 = new Huntress(world, 2, this);
 
         player1 = new Player(p1, -15, -2, p1cs, 1);
         player2 = new Player(p2, 15, -2, p2cs, 2);

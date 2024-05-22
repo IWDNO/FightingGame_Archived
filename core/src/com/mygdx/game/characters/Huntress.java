@@ -17,11 +17,11 @@ import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
 public class Huntress extends TestCharacter {
     public static final float MAX_HP = 1000;
-    public static final float ATK = 100;
+    public static final float ATK = 120;
     public static final float DEF_SCALE = .1f;
-    public static final float NORMAL_ATTACK_SCALE = .55f;
+    public static final float NORMAL_ATTACK_SCALE = .7f;
     public static final float E_ATTACK_SCALE = 1.25f;
-    public static final float Q_ATTACK_SCALE = 1f;
+    public static final float Q_ATTACK_SCALE = 1.5f;
 
     private final World world;
     private final MainScreen screen;
