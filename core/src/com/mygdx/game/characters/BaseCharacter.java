@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.animator.DamageText;
 import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.utils.PlayerStates;
@@ -14,80 +14,74 @@ import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
-public class TestCharacter extends Character {
-    public static final float MAX_HP = 1000;
-    public static final float ATK = 100;
-    public static final float DEF_SCALE = .1f;
-    public static final float NORMAL_ATTACK_SCALE = .75f;
-    public static final float E_ATTACK_SCALE = 1.25f;
-    public static final float Q_ATTACK_SCALE = 1f;
-    private float zoom = 3.2f;
+public abstract class BaseCharacter {
+    protected float MAX_HP;
+    protected float ATK;
+    protected float DEF_SCALE;
+    protected float NORMAL_ATTACK_SCALE;
+    protected float E_ATTACK_SCALE;
+    protected float Q_ATTACK_SCALE;
+    protected float zoom;
+    protected float attackDelay;
+    protected float eAttackDelay;
 
-    private final World world;
-    private final MainScreen screen;
+    protected final World world;
+    protected final MainScreen screen;
+    protected final int playerNumber;
 
-    private final float attackDelay = 0.7f;
-    private final float eAttackDelay = 5f;
-    private final int playerNumber;
-    private float attackCount = 0;
-    private float eAttackCount = 0;
-    private float currentHealth = MAX_HP;
+    protected float attackCount = 0;
+    protected float eAttackCount = 0;
+    protected float currentHealth;
 
-    private DamageText damageWriter;
+    protected DamageText damageWriter;
 
-    protected static Animation<TextureRegion> idleAnimation;
-    protected static Animation<TextureRegion> runAnimation;
-    protected static Animation<TextureRegion> jumpAnimation;
-    protected static Animation<TextureRegion> fallAnimation;
-    protected static Animation<TextureRegion> hitAnimation;
-    protected static Animation<TextureRegion> attack1Animation;
-    protected static Animation<TextureRegion> attack2Animation;
-    protected static Animation<TextureRegion> dashAnimation;
-    protected static Animation<TextureRegion> jumpDashAnimation;
-    protected static Animation<TextureRegion> deathAnimation;
+    protected Animation<TextureRegion> idleAnimation;
+    protected Animation<TextureRegion> runAnimation;
+    protected Animation<TextureRegion> jumpAnimation;
+    protected Animation<TextureRegion> fallAnimation;
+    protected Animation<TextureRegion> hitAnimation;
+    protected Animation<TextureRegion> attack1Animation;
+    protected Animation<TextureRegion> attack2Animation;
+    protected Animation<TextureRegion> dashAnimation;
+    protected Animation<TextureRegion> jumpDashAnimation;
+    protected Animation<TextureRegion> deathAnimation;
+
+    public BaseCharacter(World world, int playerNumber, MainScreen screen) {
+        this.world = world;
+        this.screen = screen;
+        this.playerNumber = playerNumber;
+        this.damageWriter = new DamageText(playerNumber);
+        setAnimations();
+    }
+
+    protected abstract void setAnimations();
 
     public float getAttackCount() {
         return attackCount;
     }
+
     public float geteAttackCount() {
         return eAttackCount;
     }
+
     public float getZoom() {
         return zoom;
     }
+
     public float getAttackDelay() {
         return attackDelay;
     }
 
     public float geteAttackDelay() {
-        return 0.8f;
+        return eAttackDelay;
     }
+
     public float getMaxHp() {
         return MAX_HP;
     }
+
     public float getDeathAnimationTime() {
-        return  1.2f;
-    }
-
-    protected void setAnimations() {
-        idleAnimation = AnimationFactory.create(6, .1f, 1, "images/Wizard Pack/Idle.png");
-        runAnimation = AnimationFactory.create(8,.1f, 1, "images/Wizard Pack/Run.png");
-        jumpAnimation = AnimationFactory.create(2,.1f, 1, "images/Wizard Pack/Jump.png");
-        fallAnimation = AnimationFactory.create(2,.1f, 1, "images/Wizard Pack/Fall.png");
-        hitAnimation = AnimationFactory.create(4, .1f,1, "images/Wizard Pack/Hit.png");
-        attack1Animation = AnimationFactory.create(8,.1f, 1, "images/Wizard Pack/Attack1.png");
-        attack2Animation = AnimationFactory.create(8, .1f,1, "images/Wizard Pack/Attack2.png");
-        dashAnimation = AnimationFactory.create(8, .1f,1, "images/Wizard Pack/Dash.png");
-        jumpDashAnimation = AnimationFactory.create(2, .1f, 1, "images/Wizard Pack/JumpDash.png");
-        deathAnimation = AnimationFactory.create(6,.1f, 1, "images/Wizard Pack/Death.png");
-    }
-
-    public TestCharacter(World world, int playerNumber, MainScreen screen) {
-        this.world = world;
-        this.playerNumber = playerNumber;
-        this.screen = screen;
-        damageWriter = new DamageText(playerNumber);
-        setAnimations();
+        return 1.2f;
     }
 
     public Animation<TextureRegion> getAnimation(int playerState) {
@@ -115,16 +109,12 @@ public class TestCharacter extends Character {
         }
     }
 
-
-    @Override
     public Body createPlayer(float x, float y) {
         Body player = createDefaultPlayer(x, y, world);
         player.setUserData(String.format("Player%d", playerNumber));
-
         return player;
     }
 
-    @Override
     public void useNormalAttack(Body player, boolean facingDirection) {
         if (attackCount < 1) {
             Timer timer = new Timer();
@@ -139,7 +129,7 @@ public class TestCharacter extends Character {
                         public void run() {
                             world.destroyBody(attack);
                         }
-                    }, 0.8f);
+                    }, 0.3f);
                     timer.scheduleTask(new Timer.Task() {
                         @Override
                         public void run() {
@@ -152,7 +142,6 @@ public class TestCharacter extends Character {
         }
     }
 
-    @Override
     public void useE(Body player, boolean facingDirection) {
         if (eAttackCount < 1) {
             Timer timer = new Timer();
@@ -180,17 +169,14 @@ public class TestCharacter extends Character {
         }
     }
 
-    @Override
     public void useQ(Body player) {
 
     }
 
-    @Override
     public float generateDamage(int attackType) {
         return getAttackScale(attackType) * ATK;
     }
 
-    @Override
     public void takeDamage(DamageResult damage, Vector2 hitPosition) {
         damage.damage = (damage.damage - (damage.damage * DEF_SCALE));
         currentHealth -= damage.damage;
@@ -202,34 +188,28 @@ public class TestCharacter extends Character {
         }
     }
 
-    @Override
     public float getHP() {
         return currentHealth;
     }
 
-    @Override
     public String getTexture() {
         return "images/Wizard Pack/Run.png";
     }
 
-    @Override
     public void update(SpriteBatch sb) {
         damageWriter.render(sb);
     }
 
-
     public float getAttackScale(int attack) {
         switch (attack) {
-            case NORMAL_ATTACK:
+            case 1:
                 return NORMAL_ATTACK_SCALE;
-            case E_ATTACK:
+            case 2:
                 return E_ATTACK_SCALE;
-            case Q_ATTACK:
+            case 3:
                 return Q_ATTACK_SCALE;
             default:
                 return 1f;
         }
     }
-
-
 }

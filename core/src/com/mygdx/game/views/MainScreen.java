@@ -53,7 +53,7 @@ public class MainScreen implements Screen {
         contactListener = new GameContactListener(this);
 
         animator.create();
-        mapSprite = new Sprite(new Texture(Gdx.files.internal("images/bg.png")));
+        mapSprite = new Sprite(new Texture(Gdx.files.internal("map/bg.png")));
         mapSprite.setSize(36f, 20f);
         mapSprite.setPosition(-18,-10);
 
@@ -86,8 +86,8 @@ public class MainScreen implements Screen {
         createBounds();
         createPlatforms();
 
-        TestCharacter p1 = new King(world, 1, this);
-        TestCharacter p2 = new HeroKnight(world, 2, this);
+        BaseCharacter p1 = new SaiHan(world, 1, this);
+        BaseCharacter p2 = new King(world, 2, this);
 
         player1 = new Player(p1, -15, -2, p1cs, 1);
         player2 = new Player(p2, 15, -2, p2cs, 2);
@@ -104,7 +104,7 @@ public class MainScreen implements Screen {
         sb.begin();
 
 
-        mapSprite.draw(sb);
+//        mapSprite.draw(sb);
         sb.draw(platform, 0, 260, 190, 25);
         sb.draw(platform, 1600, 260, -190, 25);
         sb.draw(platform, 800, 390, -320, 30);

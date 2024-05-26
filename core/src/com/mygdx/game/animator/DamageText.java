@@ -18,7 +18,7 @@ public class DamageText {
     private BitmapFont font;
 
     public DamageText(int playerNumber) {
-        font = new BitmapFont(Gdx.files.internal("font_.fnt"), false);
+        font = new BitmapFont(Gdx.files.internal("fonts/DamageNumbers/font_.fnt"), false);
         this.playerNumber = playerNumber;
     }
 

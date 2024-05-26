@@ -9,15 +9,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.characters.Character;
-import com.mygdx.game.characters.TestCharacter;
+import com.mygdx.game.characters.BaseCharacter;
 import com.mygdx.game.controller.ControlScheme;
 import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.utils.PlayerStates;
 
 public class Player {
     private ControlScheme cs;
-    private TestCharacter character;
+    private BaseCharacter character;
     private final Body player;
 
     private final float SPEED = 10;
@@ -38,7 +37,7 @@ public class Player {
     private boolean isDead;
 
 
-    public Player (TestCharacter character, float x, float y, ControlScheme cs, int playerNumber) {
+    public Player (BaseCharacter character, float x, float y, ControlScheme cs, int playerNumber) {
         this.cs = cs;
         this.character = character;
 
@@ -52,7 +51,7 @@ public class Player {
 
     public void update(SpriteBatch sb) {
         if (isDead || character.getHP() <= 0) {
-            player.setLinearVelocity(0, 0);
+            player.setLinearVelocity(0, player.getLinearVelocity().y);
             if (stateTime < character.getDeathAnimationTime()) stateTime += Gdx.graphics.getDeltaTime();
             setAnimation();
             TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, false);

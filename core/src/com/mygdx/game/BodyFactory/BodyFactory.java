@@ -33,6 +33,8 @@ public class BodyFactory {
         return player;
     }
 
+
+
     public static Body createDefaultAttack(float x,  float y, float radius, World world, boolean isFacingRight) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
