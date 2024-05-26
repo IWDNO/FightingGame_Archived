@@ -14,7 +14,7 @@ public class SaiHan extends BaseCharacter {
         this.NORMAL_ATTACK_SCALE = .75f;
         this.E_ATTACK_SCALE = 1.25f;
         this.Q_ATTACK_SCALE = 1f;
-        this.zoom = 5f;
+        this.zoom = 1.1f;
         this.attackDelay = 0.4f;
         this.eAttackDelay = 5f;
         this.currentHealth = MAX_HP;

@@ -3,6 +3,9 @@ package com.mygdx.game.BodyFactory;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
+import static com.mygdx.game.utils.Constants.PLAYER_HEIGHT;
+import static com.mygdx.game.utils.Constants.PLAYER_WIDTH;
+
 public class BodyFactory {
     public static Body createDefaultPlayer(float x, float y, World world) {
         BodyDef bodyDef = new BodyDef();
@@ -11,8 +14,8 @@ public class BodyFactory {
         bodyDef.fixedRotation = true;
 
         PolygonShape boxShape = new PolygonShape();
-        float height = 1.5f;
-        boxShape.setAsBox(height / 2f, height);
+
+        boxShape.setAsBox(PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = boxShape;

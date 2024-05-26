@@ -14,6 +14,8 @@ import com.mygdx.game.controller.ControlScheme;
 import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.utils.PlayerStates;
 
+import static com.mygdx.game.utils.Constants.*;
+
 public class Player {
     private ControlScheme cs;
     private BaseCharacter character;
@@ -33,11 +35,10 @@ public class Player {
     private float stateTime = 0f;
     private int state = PlayerStates.IDLE;
     private Animation<TextureRegion> currentAnimation;
-    private boolean block_animation = false;
     private boolean isDead;
 
 
-    public Player (BaseCharacter character, float x, float y, ControlScheme cs, int playerNumber) {
+    public Player(BaseCharacter character, float x, float y, ControlScheme cs, int playerNumber) {
         this.cs = cs;
         this.character = character;
 
@@ -55,17 +56,16 @@ public class Player {
             if (stateTime < character.getDeathAnimationTime()) stateTime += Gdx.graphics.getDeltaTime();
             setAnimation();
             TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, false);
-            float w = 1600;
-            float h = 900;
-            float width = 900f / 20f * 16f / 9f * character.getZoom() + w/10; //FIXME временно 5x
-            float height = 900f / 10f * character.getZoom();
+
+            float width = currentFrame.getRegionWidth() / WORLD_HEIGHT * character.getZoom();
+            float height = currentFrame.getRegionHeight() / WORLD_HEIGHT * character.getZoom();
             if (isFacingRight)
-                sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 - width/2,
-                        h/2 + player.getPosition().y * h/20 - height/2,
+                sb.draw(currentFrame, player.getPosition().x - width / 2f,
+                        player.getPosition().y - height / 2f,
                         width, height);
             else
-                sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 + width/2,
-                        h/2 + player.getPosition().y * h/20 - height/2,
+                sb.draw(currentFrame, player.getPosition().x + width / 2f,
+                        player.getPosition().y - height / 2f,
                         -width, height);
             return;
         }
@@ -77,19 +77,17 @@ public class Player {
 
 
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, true);
-        float w = 1600;
-        float h = 900;
-        float width = 900f / 20f * 16f / 9f * character.getZoom() + w/10; //FIXME временно 5x
-        float height = 900f / 10f * character.getZoom();
-        if (isFacingRight)
-        sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 - width/2,
-                h/2 + player.getPosition().y * h/20 - height/2,
-                width, height);
-        else
-            sb.draw(currentFrame, w/2 + player.getPosition().x * w/20 * 9/16 + width/2,
-                    h/2 + player.getPosition().y * h/20 - height/2,
-                    -width, height);
 
+        float width = currentFrame.getRegionWidth() / WORLD_HEIGHT * character.getZoom();
+        float height = currentFrame.getRegionHeight() / WORLD_HEIGHT * character.getZoom();
+        if (isFacingRight)
+            sb.draw(currentFrame, player.getPosition().x - width / 2f,
+                    player.getPosition().y - height / 2f,
+                    width, height);
+        else
+            sb.draw(currentFrame, player.getPosition().x + width / 2f,
+                    player.getPosition().y - height / 2f,
+                    -width, height);
 
         character.update(sb);
 
@@ -124,7 +122,8 @@ public class Player {
         }
 
         // apply force
-        player.setLinearVelocity(player.getLinearVelocity().x, player.getLinearVelocity().y < 10 ? player.getLinearVelocity().y : 10);
+        player.setLinearVelocity(player.getLinearVelocity().x, player.getLinearVelocity().y < 10
+                ? player.getLinearVelocity().y : 10);
         if (!isDashing) {
             player.setLinearVelocity(velX * SPEED, player.getLinearVelocity().y);
         }
@@ -214,7 +213,8 @@ public class Player {
 
     public DamageResult generateDamage(int attackType) {
         boolean isCritical = player.getLinearVelocity().y < 0;
-        float damage = isCritical ? character.generateDamage(attackType) * 2 : character.generateDamage(attackType);
+        float damage = isCritical ? character.generateDamage(attackType) * 2
+                : character.generateDamage(attackType);
         return new DamageResult(damage, isCritical);
     }
 
@@ -251,6 +251,7 @@ public class Player {
     public float getCurrentHealth() {
         return currentHealth;
     }
+
     public float getMaxHP() {
         return character.getMaxHp();
     }

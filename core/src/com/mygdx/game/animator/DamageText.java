@@ -9,6 +9,8 @@ import com.mygdx.game.utils.DamageResult;
 
 import java.util.Random;
 
+import static com.mygdx.game.utils.Constants.*;
+
 public class DamageText {
     private static final float MAX_LIFE_TIME = 2f;
     private static Array<DamageTextInstance> instances = new Array<>();
@@ -18,7 +20,9 @@ public class DamageText {
     private BitmapFont font;
 
     public DamageText(int playerNumber) {
-        font = new BitmapFont(Gdx.files.internal("fonts/DamageNumbers/font_.fnt"), false);
+        font = new BitmapFont(Gdx.files.internal("fonts/DamageNumbers/damage.fnt"), false);
+        font.getData().setScale(1f / 32f, 1f / 32f);
+        font.setUseIntegerPositions(false);
         this.playerNumber = playerNumber;
     }
 
@@ -44,11 +48,10 @@ public class DamageText {
 
         public DamageTextInstance(Vector2 position, DamageResult damage, int playerNumber) {
             Random random = new Random();
-            float w = 1600;
-            float h = 900;
+            System.out.println(position.x + " " + position.y);
             this.position = new Vector2(
-                    w/2 + position.x * w/20 * 9/16 + (random.nextInt(10) - 16) * w/500,
-                    h/2 + position.y * h/20 + h/7 + random.nextInt(5) * h/200
+                    position.x - 32 / WORLD_HEIGHT / 2 + random.nextFloat(-1f, 1f),
+                    position.y + 32 / WORLD_HEIGHT / 2 + PLAYER_HEIGHT * .75f + random.nextFloat(.5f)
             );
 
             this.playerNumber = playerNumber;
@@ -60,35 +63,14 @@ public class DamageText {
             lifeTime += Gdx.graphics.getDeltaTime();
 
             float alpha = 1 - (lifeTime / MAX_LIFE_TIME);
-//            if (playerNumber == 1) {
-//                font.setColor(1, 0, 0, alpha); // Red color for player 1
-//            } else {
-//                font.setColor(0, 0, 1, alpha); // Blue color for player 2
-//            }
 
-            // Устанавливаем масштабирование шрифта для создания обводки
-
-            // Отрисовываем текст черным цветом для создания обводки
-            font.setColor(0, 0, 0, alpha);
-            font.getData().setScale(1.1f, 1.1f); // Увеличиваем размер шрифта в 2 раза
-            if (damage.isCritical) {
-                font.draw(batch, "Crit", position.x, position.y + 40);
-                font.getData().setScale(1.6f);
-            }
-            font.draw(batch, String.valueOf((int) damage.damage), position.x, position.y);
-
-            // Сбрасываем масштабирование шрифта к нормальному значению
-            font.getData().setScale(1f, 1f);
-
-            // Отрисовываем текст нужным цветом
             if (playerNumber == 1) {
                 font.setColor(1, 0, 0, alpha); // Red color for player 1
             } else {
                 font.setColor(0, 0, 1, alpha); // Blue color for player 2
             }
             if (damage.isCritical) {
-                font.draw(batch, "Crit", position.x, position.y + 40);
-                font.getData().setScale(1.5f);
+                font.draw(batch, "Crit", position.x, position.y + 1);
             }
             font.draw(batch, String.valueOf((int) damage.damage), position.x, position.y);
         }

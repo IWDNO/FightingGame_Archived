@@ -16,13 +16,11 @@ import com.mygdx.game.bodies.Player;
 import com.mygdx.game.characters.*;
 import com.mygdx.game.controller.ControlScheme;
 
+import static com.mygdx.game.utils.Constants.*;
 import static com.badlogic.gdx.Input.Keys.W;
 import static com.mygdx.game.BodyFactory.BodyFactory.createWorldBounds;
 
 public class MainScreen implements Screen {
-    public static final float WORLD_HEIGHT = 20;
-    public static final float WORLD_WIDTH = 20;
-
     public FightingGame parent;
     public GameContactListener contactListener;
 
@@ -32,6 +30,7 @@ public class MainScreen implements Screen {
     private InputAdapter controller;
     private SpriteBatch sb;
     private Sprite mapSprite;
+    private Sprite platformSprite;
 
     private final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3;
 
@@ -55,11 +54,11 @@ public class MainScreen implements Screen {
         animator.create();
         mapSprite = new Sprite(new Texture(Gdx.files.internal("map/bg.png")));
         mapSprite.setSize(36f, 20f);
-        mapSprite.setPosition(-18,-10);
+        mapSprite.setPosition(-18, -10);
 
         texture = new Texture("images/HealthBar.png");
-        healthRegion = new TextureRegion(texture,0,0, 10, 80);
-        healthOutline = new TextureRegion(texture,26,0, 10, 80);
+        healthRegion = new TextureRegion(texture, 0, 0, 10, 80);
+        healthOutline = new TextureRegion(texture, 26, 0, 10, 80);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class MainScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
         world.setContactListener(contactListener);
 
-        camera = new OrthographicCamera(WORLD_WIDTH * 16/9, WORLD_HEIGHT);
+        camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
         sb = new SpriteBatch();
         sb.setProjectionMatrix(camera.combined);
 
@@ -101,32 +100,43 @@ public class MainScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         debugRenderer.render(world, camera.combined);
+
         sb.begin();
 
+        //render background & platforms
+        mapSprite.draw(sb);
 
-//        mapSprite.draw(sb);
-        sb.draw(platform, 0, 260, 190, 25);
-        sb.draw(platform, 1600, 260, -190, 25);
-        sb.draw(platform, 800, 390, -320, 30);
-        sb.draw(platform, 800, 390, 320, 30);
+        sb.draw(platform, -WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,
+                WORLD_WIDTH / 4f / 2f, .6f);
+        sb.draw(platform, WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,
+                -WORLD_WIDTH / 4f / 2f, .6f);
 
+        sb.draw(platform, 0, -WORLD_HEIGHT / 20 - platform.getHeight() / WORLD_HEIGHT,
+                -WORLD_WIDTH / 2f / 2f, .6f);
+        sb.draw(platform, 0, -WORLD_HEIGHT / 20 - platform.getHeight() / WORLD_HEIGHT,
+                WORLD_WIDTH / 2f / 2f, .6f);
 
-        animator.render(sb);
+        // update players
         player1.update(sb);
         player2.update(sb);
 
+        // hp drawing
+        float xPos = WORLD_WIDTH / 2 * .9f;
+        float yPos = WORLD_HEIGHT / 2 * .4f;
+        float w = WORLD_WIDTH / 40;
+        float h = WORLD_HEIGHT / 4;
         // player1 hp
-        float height = player1.getCurrentHealth() * 200 / player1.getMaxHP();
-        sb.draw(healthOutline, 25, 650, 25, 200);
-        sb.draw(healthRegion, 25, 650, 25, height);
-
+        float height = player1.getCurrentHealth() * h / player1.getMaxHP();
+        sb.draw(healthOutline, -xPos - healthOutline.getRegionWidth() / WORLD_WIDTH, yPos, w, h);
+        sb.draw(healthRegion, -xPos - healthOutline.getRegionWidth() / WORLD_WIDTH, yPos, w, height);
         // player2 hp
-        height = player2.getCurrentHealth() * 200 / player2.getMaxHP();
-        sb.draw(healthOutline, 1575-25, 650, 25, 200);
-        sb.draw(healthRegion, 1575-25, 650, 25, height);
+        height = player2.getCurrentHealth() * h / player2.getMaxHP();
+        sb.draw(healthOutline, xPos, yPos, w, h);
+        sb.draw(healthRegion, xPos, yPos, w, height);
 
         sb.end();
-        world.step(1/60f, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+
+        world.step(1 / 60f, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
     }
 
     @Override
@@ -169,15 +179,15 @@ public class MainScreen implements Screen {
     private void createPlatforms() {
         // Массив позиций платформ
         Vector2[] positions = {
-                new Vector2(-17, -4),
-                new Vector2(17, -4),
-                new Vector2(0, -1)
+                new Vector2(-WORLD_WIDTH / 2, -WORLD_HEIGHT / 5),
+                new Vector2(WORLD_WIDTH / 2, -WORLD_HEIGHT / 5),
+                new Vector2(0, -WORLD_HEIGHT / 20)
         };
 
         float[] widths = {
-                7,
-                7,
-                14
+                WORLD_WIDTH / 4f,
+                WORLD_WIDTH / 4f,
+                WORLD_WIDTH / 2f
         };
 
         // Создание фикстуры платформы (общая для всех платформ)
