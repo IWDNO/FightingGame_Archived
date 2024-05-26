@@ -20,8 +20,6 @@ public class BodyFactory {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = boxShape;
         fixtureDef.friction = 0f;
-        fixtureDef.restitution = 0f;
-        fixtureDef.density = 1f;
 
         Body player = world.createBody(bodyDef);
         player.createFixture(fixtureDef);

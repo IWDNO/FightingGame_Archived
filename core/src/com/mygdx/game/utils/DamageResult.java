@@ -1,11 +1,11 @@
 package com.mygdx.game.utils;
 
 public class DamageResult {
-    public float damage;
+    public float value;
     public boolean isCritical;
 
-    public DamageResult(float damage, boolean isCritical) {
-        this.damage = damage;
+    public DamageResult(float value, boolean isCritical) {
+        this.value = value;
         this.isCritical = isCritical;
     }
 }

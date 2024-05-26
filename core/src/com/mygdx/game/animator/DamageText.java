@@ -72,7 +72,7 @@ public class DamageText {
             if (damage.isCritical) {
                 font.draw(batch, "Crit", position.x, position.y + 1);
             }
-            font.draw(batch, String.valueOf((int) damage.damage), position.x, position.y);
+            font.draw(batch, String.valueOf((int) damage.value), position.x, position.y);
         }
 
         public boolean isExpired() {

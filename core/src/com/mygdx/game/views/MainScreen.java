@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.FightingGame;
 import com.mygdx.game.GameContactListener;
 import com.mygdx.game.animator.Animator;
-import com.mygdx.game.bodies.Player;
+//import com.mygdx.game.bodies.Player;
 import com.mygdx.game.characters.*;
 import com.mygdx.game.controller.ControlScheme;
 
@@ -34,12 +34,8 @@ public class MainScreen implements Screen {
 
     private final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3;
 
-    public Player player1;
-    public Player player2;
-    private ControlScheme p1cs = new ControlScheme(
-            Input.Keys.A, Input.Keys.D, W, Input.Keys.SHIFT_LEFT, Input.Keys.Z, Input.Keys.X, Input.Keys.C);
-    private ControlScheme p2cs = new ControlScheme(
-            Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.SHIFT_RIGHT, Input.Keys.SLASH, Input.Keys.PERIOD, Input.Keys.COMMA);
+    public BaseCharacter player1;
+    public BaseCharacter player2;
 
     private Texture platform = new Texture("map/platform.png");
     private Animator animator = new Animator();
@@ -85,12 +81,8 @@ public class MainScreen implements Screen {
         createBounds();
         createPlatforms();
 
-        BaseCharacter p1 = new SaiHan(world, 1, this);
-        BaseCharacter p2 = new King(world, 2, this);
-
-        player1 = new Player(p1, -15, -2, p1cs, 1);
-        player2 = new Player(p2, 15, -2, p2cs, 2);
-
+        player1 = new SaiHan(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
+        player2 = new King(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
 
     }
 
@@ -126,11 +118,11 @@ public class MainScreen implements Screen {
         float w = WORLD_WIDTH / 40;
         float h = WORLD_HEIGHT / 4;
         // player1 hp
-        float height = player1.getCurrentHealth() * h / player1.getMaxHP();
+        float height = player1.getHP() * h / player1.getMaxHp();
         sb.draw(healthOutline, -xPos - healthOutline.getRegionWidth() / WORLD_WIDTH, yPos, w, h);
         sb.draw(healthRegion, -xPos - healthOutline.getRegionWidth() / WORLD_WIDTH, yPos, w, height);
         // player2 hp
-        height = player2.getCurrentHealth() * h / player2.getMaxHP();
+        height = player2.getHP() * h / player2.getMaxHp();
         sb.draw(healthOutline, xPos, yPos, w, h);
         sb.draw(healthRegion, xPos, yPos, w, height);
 
