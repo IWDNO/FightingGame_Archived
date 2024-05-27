@@ -12,12 +12,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.FightingGame;
 import com.mygdx.game.GameContactListener;
 import com.mygdx.game.animator.Animator;
-//import com.mygdx.game.bodies.Player;
 import com.mygdx.game.characters.*;
-import com.mygdx.game.controller.ControlScheme;
 
 import static com.mygdx.game.utils.Constants.*;
-import static com.badlogic.gdx.Input.Keys.W;
 import static com.mygdx.game.BodyFactory.BodyFactory.createWorldBounds;
 
 public class MainScreen implements Screen {
@@ -34,8 +31,8 @@ public class MainScreen implements Screen {
 
     private final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3;
 
-    public BaseCharacter player1;
-    public BaseCharacter player2;
+    public Player player1;
+    public Player player2;
 
     private Texture platform = new Texture("map/platform.png");
     private Animator animator = new Animator();

@@ -18,7 +18,7 @@ import java.util.Set;
 import static com.mygdx.game.BodyFactory.BodyFactory.*;
 import static com.mygdx.game.utils.Constants.*;
 
-public abstract class BaseCharacter {
+public abstract class Player {
     protected float MAX_HP;
     protected float ATK;
     protected float DEF_SCALE;
@@ -67,8 +67,10 @@ public abstract class BaseCharacter {
 
     protected float HIT_ANIMATION_TIME = .4f;
 
+    protected Timer timer;
 
-    public BaseCharacter(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
+
+    public Player(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
         this.world = world;
         this.screen = screen;
         this.playerNumber = playerNumber;
@@ -76,9 +78,12 @@ public abstract class BaseCharacter {
         this.cs = cs;
         player = createPlayer(x, y);
         isFacingRight = playerNumber == 1;
+
         setAnimations();
         currentAnimation = idleAnimation;
         unbreakableAnimations = Set.of(attack1Animation, attack2Animation, hitAnimation, deathAnimation);
+
+        timer = new Timer();
     }
 
     public float getMaxHp() {
@@ -100,60 +105,49 @@ public abstract class BaseCharacter {
 
     public void useNormalAttack(Body player, boolean facingDirection) {
         if (attackCount < 1) {
-            Timer timer = new Timer();
             attackCount++;
             timer.scheduleTask(new Timer.Task() {
-                @Override
                 public void run() {
                     Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1.5f, world, facingDirection);
                     attack.setUserData(String.format("Player%d-attack", playerNumber));
                     timer.scheduleTask(new Timer.Task() {
-                        @Override
                         public void run() {
                             world.destroyBody(attack);
                         }
                     }, 0.3f);
                     timer.scheduleTask(new Timer.Task() {
-                        @Override
                         public void run() {
                             attackCount--;
                         }
                     }, attackDelay);
                 }
             }, 0.2f);
-
         }
     }
 
     public void useE(Body player, boolean facingDirection) {
         if (eAttackCount < 1) {
-            Timer timer = new Timer();
             eAttackCount++;
             timer.scheduleTask(new Timer.Task() {
-                @Override
                 public void run() {
                     Body attack = createDefaultEAttack(player.getPosition().x, player.getPosition().y, 2.5f, world, facingDirection);
                     attack.setUserData(String.format("Player%d-eAttack", playerNumber));
                     timer.scheduleTask(new Timer.Task() {
-                        @Override
                         public void run() {
                             world.destroyBody(attack);
                         }
                     }, 0.8f);
                     timer.scheduleTask(new Timer.Task() {
-                        @Override
                         public void run() {
                             eAttackCount--;
                         }
                     }, eAttackDelay);
                 }
             }, 0.2f);
-
         }
     }
 
     public void useQ(Body player) {
-
     }
 
     public DamageResult generateDamage(int attackType) {
@@ -178,40 +172,34 @@ public abstract class BaseCharacter {
         }
 
         currentAnimation = hitAnimation;
-        Timer timer = new Timer();
-        timer.scheduleTask(new Timer.Task() {
-            @Override
-            public void run() {
-                currentAnimation = idleAnimation;
-            }
-        }, HIT_ANIMATION_TIME);
+        scheduleAnimation(idleAnimation, HIT_ANIMATION_TIME);
     }
 
     public float getAttackScale(int attack) {
-        switch (attack) {
-            case 1:
-                return NORMAL_ATTACK_SCALE;
-            case 2:
-                return E_ATTACK_SCALE;
-            case 3:
-                return Q_ATTACK_SCALE;
-            default:
-                return 1f;
-        }
+        return switch (attack) {
+            case 1 -> NORMAL_ATTACK_SCALE;
+            case 2 -> E_ATTACK_SCALE;
+            case 3 -> Q_ATTACK_SCALE;
+            default -> 1f;
+        };
     }
 
     public void update(SpriteBatch sb) {
         damageWriter.render(sb);
         updateFacingDirection();
 
-        if (unbreakableAnimations.contains(currentAnimation)) {}
-        else if (isDashing && player.getLinearVelocity().y == 0) currentAnimation = dashAnimation;
-        else if (isDashing && player.getLinearVelocity().y != 0) currentAnimation = jumpDashAnimation;
-        else if (player.getLinearVelocity().y > 0) currentAnimation = jumpAnimation;
-        else if (player.getLinearVelocity().y < 0) currentAnimation = fallAnimation;
-        else if (player.getLinearVelocity().x != 0) currentAnimation = runAnimation;
-        else currentAnimation = idleAnimation;
+        //update animations according to player movement
+        if (!unbreakableAnimations.contains(currentAnimation)) {
+            if (isDashing) {
+                if (player.getLinearVelocity().y == 0) currentAnimation = dashAnimation;
+                else currentAnimation = jumpDashAnimation;
+            } else if (player.getLinearVelocity().y > 0) currentAnimation = jumpAnimation;
+            else if (player.getLinearVelocity().y < 0) currentAnimation = fallAnimation;
+            else if (player.getLinearVelocity().x != 0) currentAnimation = runAnimation;
+            else currentAnimation = idleAnimation;
+        }
 
+        // render animation
         stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, !(currentHealth <= 0));
 
@@ -235,21 +223,14 @@ public abstract class BaseCharacter {
         handleInput();
     }
 
-
     public void handleInput() {
         if (currentHealth <= 0) return;
-        Timer timer = new Timer();
 
         // left and right
         int velX = 0;
-        if (Gdx.input.isKeyPressed(cs.moveLeftKey)) {
-            velX = -1;
-        } else if (Gdx.input.isKeyPressed(cs.moveRightKey)) {
-            velX = 1;
-        }
-        if (Gdx.input.isKeyPressed(cs.moveLeftKey) && Gdx.input.isKeyPressed(cs.moveRightKey)) {
-            velX = 0;
-        }
+        if (Gdx.input.isKeyPressed(cs.moveLeftKey)) velX = -1;
+        else if (Gdx.input.isKeyPressed(cs.moveRightKey)) velX = 1;
+        if (Gdx.input.isKeyPressed(cs.moveLeftKey) && Gdx.input.isKeyPressed(cs.moveRightKey)) velX = 0;
 
         // up
         if (Gdx.input.isKeyJustPressed(cs.jumpKey) && jumpCounter < 2) {
@@ -258,9 +239,7 @@ public abstract class BaseCharacter {
             player.setLinearVelocity(player.getLinearVelocity().x, 0);
             player.applyLinearImpulse(new Vector2(0, force), player.getPosition(), true);
         }
-        if (player.getLinearVelocity().y == 0) {
-            jumpCounter = 0;
-        }
+        if (player.getLinearVelocity().y == 0) jumpCounter = 0;
 
         // apply force
         player.setLinearVelocity(player.getLinearVelocity().x, player.getLinearVelocity().y < 10
@@ -268,8 +247,6 @@ public abstract class BaseCharacter {
         if (!isDashing) {
             player.setLinearVelocity(velX * speed, player.getLinearVelocity().y);
         }
-
-        // check for movement
 
         // dash
         if (!isDashing && Gdx.input.isKeyJustPressed(cs.dashKey)) {
@@ -279,27 +256,17 @@ public abstract class BaseCharacter {
         //attacks TODO вынести обработку анимаций в метод использования аттак (может быть)
         if (Gdx.input.isKeyJustPressed(cs.attackKey)) {
             if (attackCount < 1) {
-                currentAnimation = attack1Animation;
                 stateTime = 0f;
-                timer.scheduleTask(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        currentAnimation = idleAnimation;
-                    }
-                }, attackDelay);
+                currentAnimation = attack1Animation;
+                scheduleAnimation(idleAnimation, attackDelay);
                 useNormalAttack(player, isFacingRight);
             }
         }
         if (Gdx.input.isKeyJustPressed(cs.eKey)) {
             if (eAttackCount < 1) {
-                currentAnimation = attack2Animation;
                 stateTime = 0f;
-                timer.scheduleTask(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        currentAnimation = idleAnimation;
-                    }
-                }, eAttackAnimationDelay);
+                currentAnimation = attack2Animation;
+                scheduleAnimation(idleAnimation, eAttackAnimationDelay);
                 useE(player, isFacingRight);
             }
         }
@@ -308,21 +275,16 @@ public abstract class BaseCharacter {
         }
     }
 
-    void dash() {
-        if (!isDashingAvailable) {
-            return;
-        }
+    public void dash() {
+        if (!isDashingAvailable) return;
         isDashing = true;
         isDashingAvailable = false;
-        Timer dashTimer = new Timer();
-        dashTimer.scheduleTask(new Timer.Task() {
-            @Override
+        timer.scheduleTask(new Timer.Task() {
             public void run() {
                 isDashing = false;
             }
         }, dashDuration);
-        dashTimer.scheduleTask(new Timer.Task() {
-            @Override
+        timer.scheduleTask(new Timer.Task() {
             public void run() {
                 isDashingAvailable = true;
             }
@@ -333,9 +295,18 @@ public abstract class BaseCharacter {
         player.applyLinearImpulse(new Vector2(impulseX, 0), player.getPosition(), true);
     }
 
-    private void updateFacingDirection() {
-        if (isDashing) return;
+    public void updateFacingDirection() {
+        if (isDashing || unbreakableAnimations.contains(currentAnimation)) return;
         if (player.getLinearVelocity().x > 0) isFacingRight = true;
         if (player.getLinearVelocity().x < 0) isFacingRight = false;
+    }
+
+    public void scheduleAnimation(Animation<TextureRegion> animation, float delaySec) {
+        timer.scheduleTask(new Timer.Task() {
+            public void run() {
+                stateTime = 0f;
+                currentAnimation = animation;
+            }
+        }, delaySec);
     }
 }

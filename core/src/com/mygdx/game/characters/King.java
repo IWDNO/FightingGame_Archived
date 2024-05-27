@@ -5,7 +5,7 @@ import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
 import com.mygdx.game.views.MainScreen;
 
-public class King extends BaseCharacter {
+public class King extends Player {
 
     public King(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
         super(world, playerNumber, screen, cs, x, y);

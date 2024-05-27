@@ -4,9 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 
-import com.badlogic.ashley.core.Entity;
 //import com.mygdx.game.bodies.Player;
-import com.mygdx.game.characters.BaseCharacter;
+import com.mygdx.game.characters.Player;
 import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.views.MainScreen;
 
@@ -26,7 +25,7 @@ public class GameContactListener implements ContactListener {
 //        System.out.println(fa.getBody().getUserData() + " + " + fb.getBody().getUserData());
 
         if (check(contact, "Player1-attack", "Player2")) {
-            BaseCharacter player1 = parent.player1, player2 = parent.player2;
+            Player player1 = parent.player1, player2 = parent.player2;
             DamageResult damage = player1.generateDamage(1);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-attack") ?
@@ -34,7 +33,7 @@ public class GameContactListener implements ContactListener {
             player2.takeDamage(damage, hitPosition);
 
         } else if (check(contact, "Player2-attack", "Player1")) {
-            BaseCharacter player1 = parent.player1, player2 = parent.player2;
+            Player player1 = parent.player1, player2 = parent.player2;
             DamageResult damage = player2.generateDamage(1);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-attack") ?
@@ -43,7 +42,7 @@ public class GameContactListener implements ContactListener {
         }
 
         if (check(contact, "Player1-eAttack", "Player2")) {
-            BaseCharacter player1 = parent.player1, player2 = parent.player2;
+            Player player1 = parent.player1, player2 = parent.player2;
             DamageResult damage = player1.generateDamage(2);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-eAttack") ?
@@ -51,7 +50,7 @@ public class GameContactListener implements ContactListener {
             player2.takeDamage(damage, hitPosition);
 
         } else if (check(contact, "Player2-eAttack", "Player1")) {
-            BaseCharacter player1 = parent.player1, player2 = parent.player2;
+            Player player1 = parent.player1, player2 = parent.player2;
             DamageResult damage = player2.generateDamage(2);
 
             Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-eAttack") ?
