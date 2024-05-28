@@ -48,7 +48,6 @@ public class DamageText {
 
         public DamageTextInstance(Vector2 position, DamageResult damage, int playerNumber) {
             Random random = new Random();
-            System.out.println(position.x + " " + position.y);
             this.position = new Vector2(
                     position.x - 32 / WORLD_HEIGHT / 2 + random.nextFloat(-1f, 1f),
                     position.y + 32 / WORLD_HEIGHT / 2 + PLAYER_HEIGHT * .75f + random.nextFloat(.5f)

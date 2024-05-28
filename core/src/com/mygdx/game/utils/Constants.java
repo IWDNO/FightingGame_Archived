@@ -4,7 +4,6 @@ import com.badlogic.gdx.Input;
 import com.mygdx.game.controller.ControlScheme;
 
 public class Constants {
-    public static final float ZERO = 1e-6f;
     public static final float RATIO = 16f / 9f;
     public static final float WORLD_HEIGHT = 20;
     public static final float WORLD_WIDTH = WORLD_HEIGHT * RATIO;
@@ -18,4 +17,8 @@ public class Constants {
     public static final ControlScheme PLAYER2_CONTROL_SCHEME = new ControlScheme(
             Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.PERIOD, Input.Keys.COMMA
     );
+
+    public static final int NORMAL_ATTACK = 1;
+    public static final int E_ATTACK = 2;
+    public static final int Q_ATTACK = 3;
 }

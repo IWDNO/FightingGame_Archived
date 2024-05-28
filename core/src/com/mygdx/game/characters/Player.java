@@ -15,10 +15,16 @@ import com.mygdx.game.views.MainScreen;
 
 import java.util.Set;
 
-import static com.mygdx.game.BodyFactory.BodyFactory.*;
+import static com.mygdx.game.BodyFactory.BodyFactory.createDefaultPlayer;
+import static com.mygdx.game.BodyFactory.BodyFactory.removeDeadFixtures;
 import static com.mygdx.game.utils.Constants.*;
 
 public abstract class Player {
+    protected final World world;
+    protected final MainScreen screen;
+    protected final int playerNumber;
+    protected final ControlScheme cs;
+    protected final Body body;
     protected float MAX_HP;
     protected float ATK;
     protected float DEF_SCALE;
@@ -35,13 +41,6 @@ public abstract class Player {
     protected float dashDuration = .2f;
     protected float dashSpeed = 20f;
     protected float dashDelay = .5f;
-
-    protected final World world;
-    protected final MainScreen screen;
-    protected final int playerNumber;
-    protected final ControlScheme cs;
-    protected final Body body;
-
     protected float attackCount = 0;
     protected float eAttackCount = 0;
     protected float currentHealth;
@@ -100,24 +99,31 @@ public abstract class Player {
         return body;
     }
 
-    protected abstract void setAnimations();
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
 
+    public boolean isFacingRight() {
+        return isFacingRight;
+    }
+
+    protected abstract void setAnimations();
 
     protected abstract void createNormalAttack();    // configurable depending on animations
 
     protected abstract void createEAttack();    // configurable depending on animations
 
-    public void useNormalAttack() {
+    protected void useNormalAttack() {
         if (attackCount < 1) {
             attackCount++;
             stateTime = 0f;
             currentAnimation = attack1Animation;
-            scheduleAnimation(idleAnimation, attackDelay);
+            scheduleAnimation(idleAnimation, attackDelay); // assuming that `attackDelay` is equal to the animation time
             createNormalAttack();
         }
     }
 
-    public void useE() {
+    protected void useE() {
         if (eAttackCount < 1) {
             eAttackCount++;
             stateTime = 0f;
@@ -127,7 +133,7 @@ public abstract class Player {
         }
     }
 
-    public void useQ() {
+    protected void useQ() {
     }
 
     public DamageResult generateDamage(int attackType) {
@@ -155,11 +161,11 @@ public abstract class Player {
         scheduleAnimation(idleAnimation, HIT_ANIMATION_TIME);
     }
 
-    public float getAttackScale(int attack) { //TODO сделать что-то с числами
+    protected float getAttackScale(int attack) { //TODO сделать что-то с числами
         return switch (attack) {
-            case 1 -> NORMAL_ATTACK_SCALE;
-            case 2 -> E_ATTACK_SCALE;
-            case 3 -> Q_ATTACK_SCALE;
+            case NORMAL_ATTACK -> NORMAL_ATTACK_SCALE;
+            case E_ATTACK -> E_ATTACK_SCALE;
+            case Q_ATTACK -> Q_ATTACK_SCALE;
             default -> 1f;
         };
     }
@@ -195,16 +201,16 @@ public abstract class Player {
                     body.getPosition().y - height / 2f,
                     -width, height);
 
+        // handle input
         if (currentHealth <= 0) {
             body.setLinearVelocity(body.getLinearVelocity().y == 0 ? 0 : body.getLinearVelocity().x,
                     body.getLinearVelocity().y);
             return;
         }
-
         handleInput();
     }
 
-    public void handleInput() {
+    protected void handleInput() {
         if (currentHealth <= 0) return;
 
         // left and right
@@ -238,7 +244,7 @@ public abstract class Player {
         else if (Gdx.input.isKeyJustPressed(cs.qkey)) useQ();
     }
 
-    public void dash() {
+    protected void dash() {
         if (!isDashingAvailable) return;
         isDashing = true;
         isDashingAvailable = false;
@@ -258,13 +264,13 @@ public abstract class Player {
         body.applyLinearImpulse(new Vector2(impulseX, 0), body.getPosition(), true);
     }
 
-    public void updateFacingDirection() {
+    protected void updateFacingDirection() {
         if (isDashing || unbreakableAnimations.contains(currentAnimation)) return;
         if (body.getLinearVelocity().x > 0) isFacingRight = true;
         if (body.getLinearVelocity().x < 0) isFacingRight = false;
     }
 
-    public void scheduleAnimation(Animation<TextureRegion> animation, float delaySec) {
+    protected void scheduleAnimation(Animation<TextureRegion> animation, float delaySec) {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
                 stateTime = 0f;

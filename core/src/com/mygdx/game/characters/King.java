@@ -7,6 +7,7 @@ import com.mygdx.game.controller.ControlScheme;
 import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.BodyFactory.BodyFactory.*;
+import static com.mygdx.game.utils.Constants.*;
 
 public class King extends Player {
 
@@ -43,11 +44,11 @@ public class King extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor(body, 1.5f, isFacingRight, playerNumber);
+                addAttackSensor(King.this, 1.6f, 2.85f, 0, NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(body, playerNumber);
+                    public void run() {removeAttackSensor(King.this, NORMAL_ATTACK);
                     }
-                }, 0.3f);
+                }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {
                         attackCount--;
@@ -61,11 +62,11 @@ public class King extends Player {
     protected void createEAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor1(body, 1.5f, isFacingRight, playerNumber);
+                addAttackSensor(King.this, 3.25f, 1.5f, 1.4f, E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor1(body, playerNumber);
+                    public void run() {removeAttackSensor(King.this, E_ATTACK);
                     }
-                }, 0.8f);
+                }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {
                         eAttackCount--;

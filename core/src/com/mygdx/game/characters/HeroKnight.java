@@ -1,4 +1,79 @@
 package com.mygdx.game.characters;
 
-public class HeroKnight {
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
+import com.mygdx.game.animator.AnimationFactory;
+import com.mygdx.game.controller.ControlScheme;
+import com.mygdx.game.views.MainScreen;
+
+import static com.mygdx.game.BodyFactory.BodyFactory.*;
+import static com.mygdx.game.utils.Constants.*;
+
+public class HeroKnight extends Player {
+
+    public HeroKnight(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
+        super(world, playerNumber, screen, cs, x ,y);
+        this.MAX_HP = 1000;
+        this.ATK = 100;
+        this.DEF_SCALE = 1.1f;
+        this.NORMAL_ATTACK_SCALE = .75f;
+        this.E_ATTACK_SCALE = 1.25f;
+        this.Q_ATTACK_SCALE = 1f;
+        this.zoom = 1.25f;
+        this.attackDelay = .7f;
+        this.eAttackDelay = 5f;
+        this.eAttackAnimationTime = .7f;
+        this.currentHealth = MAX_HP;
+        this.HIT_ANIMATION_TIME = .3f;
+    }
+
+    @Override
+    protected void setAnimations() {
+        idleAnimation = AnimationFactory.create(11, .1f, 1, "images/HeroKnight/Idle.png");
+        runAnimation = AnimationFactory.create(8, .1f, 1, "images/HeroKnight/Run.png");
+        jumpAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/Jump.png");
+        fallAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/Fall.png");
+        hitAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/Hit.png");
+        attack1Animation = AnimationFactory.create(7, .1f, 1, "images/HeroKnight/Attack1.png");
+        attack2Animation = AnimationFactory.create(7, .1f, 1, "images/HeroKnight/Attack2.png");
+        dashAnimation = AnimationFactory.create(8, .1f, 1, "images/HeroKnight/Dash.png");
+        jumpDashAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/JumpDash.png");
+        deathAnimation = AnimationFactory.create(7, .15f, 1, "images/HeroKnight/Death.png");
+    }
+
+    @Override
+    protected void createNormalAttack() {
+        timer.scheduleTask(new Timer.Task() {
+            public void run() {
+                addAttackSensor(HeroKnight.this, 1.75f, .75f, .5f, NORMAL_ATTACK);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {removeAttackSensor(HeroKnight.this, NORMAL_ATTACK);
+                    }
+                }, 0.2f);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {
+                        attackCount--;
+                    }
+                }, attackDelay);
+            }
+        }, 0.3f);
+    }
+
+    @Override
+    protected void createEAttack() {
+        timer.scheduleTask(new Timer.Task() {
+            public void run() {
+                addAttackSensor(HeroKnight.this, 3f, 2.2f, .5f, E_ATTACK);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {removeAttackSensor(HeroKnight.this, E_ATTACK);
+                    }
+                }, 0.2f);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {
+                        eAttackCount--;
+                    }
+                }, eAttackDelay);
+            }
+        }, 0.3f);
+    }
 }

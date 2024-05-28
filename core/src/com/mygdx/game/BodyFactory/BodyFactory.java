@@ -1,5 +1,6 @@
 package com.mygdx.game.BodyFactory;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.characters.Player;
@@ -41,7 +42,7 @@ public class BodyFactory {
         return player;
     }
 
-    public static void addAttackSensor(Body player, float radius, boolean isFacingRight, int playerNumber) {
+    public static void addAttackSensor(Player player, float radius, float offsetX, float offsetY, int attackType) {
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(radius);
 
@@ -49,49 +50,50 @@ public class BodyFactory {
         fixtureDef.shape = circleShape;
         fixtureDef.isSensor = true;
 
-        float offsetX = isFacingRight ? 2f : -2f;
-        circleShape.setPosition(new Vector2(offsetX, 0));
+        offsetX *= player.isFacingRight() ? 1 : -1;
+        circleShape.setPosition(new Vector2(offsetX, offsetY));
 
-        Fixture sensorFixture = player.createFixture(fixtureDef);
-        sensorFixture.setUserData(new UserData("Player" + playerNumber + "-attack"));
-
-        circleShape.dispose();
-    }
-
-    public static void addAttackSensor1(Body player, float radius, boolean isFacingRight, int playerNumber) {
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(radius);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circleShape;
-        fixtureDef.isSensor = true;
-
-        float offsetX = isFacingRight ? 2f : -2f;
-        circleShape.setPosition(new Vector2(offsetX, 0));
-
-        Fixture sensorFixture = player.createFixture(fixtureDef);
-        sensorFixture.setUserData(new UserData("Player" + playerNumber + "-eAttack"));
+        Fixture sensorFixture = player.getBody().createFixture(fixtureDef);
+        sensorFixture.setUserData(new UserData("Player" + player.getPlayerNumber() + "-Attack" + attackType));
 
         circleShape.dispose();
     }
 
-    public static void removeAttackSensor(Body player, int playerNumber) {
-        for (Fixture fixture : player.getFixtureList()) {
-            if (("Player" + playerNumber + "-attack").equals(((UserData) fixture.getUserData()).getName())) {
-                player.destroyFixture(fixture);
+
+//    public static void addAttackSensor1(Body player, float radius, boolean isFacingRight, int playerNumber, float offsetX, float offsetY) {
+//        CircleShape circleShape = new CircleShape();
+//        circleShape.setRadius(radius);
+//
+//        FixtureDef fixtureDef = new FixtureDef();
+//        fixtureDef.shape = circleShape;
+//        fixtureDef.isSensor = true;
+//
+//        offsetX += isFacingRight ? 2f : -2f;
+//        circleShape.setPosition(new Vector2(offsetX, offsetY));
+//
+//        Fixture sensorFixture = player.createFixture(fixtureDef);
+//        sensorFixture.setUserData(new UserData("Player" + playerNumber + "-eAttack"));
+//
+//        circleShape.dispose();
+//    }
+
+    public static void removeAttackSensor(Player player, int attackType) {
+        for (Fixture fixture : player.getBody().getFixtureList()) {
+            if (("Player" + player.getPlayerNumber() + "-Attack" + attackType).equals(((UserData) fixture.getUserData()).getName())) {
+                player.getBody().destroyFixture(fixture);
                 break;
             }
         }
     }
 
-    public static void removeAttackSensor1(Body player, int playerNumber) {
-        for (Fixture fixture : player.getFixtureList()) {
-            if (("Player" + playerNumber + "-eAttack").equals(((UserData) fixture.getUserData()).getName())) {
-                player.destroyFixture(fixture);
-                break;
-            }
-        }
-    }
+//    public static void removeAttackSensor1(Body player, int playerNumber) {
+//        for (Fixture fixture : player.getFixtureList()) {
+//            if (("Player" + playerNumber + "-eAttack").equals(((UserData) fixture.getUserData()).getName())) {
+//                player.destroyFixture(fixture);
+//                break;
+//            }
+//        }
+//    }
 
     public static void removeDeadFixtures(Player player) {
         for (Fixture fixture : player.getBody().getFixtureList()) {

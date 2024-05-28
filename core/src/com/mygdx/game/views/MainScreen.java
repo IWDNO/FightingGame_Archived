@@ -94,7 +94,7 @@ public class MainScreen implements Screen {
         sb.begin();
 
         //render background & platforms
-//        mapSprite.draw(sb);
+        mapSprite.draw(sb);
 //        animator.render(sb);
         sb.draw(platform, -WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,
                 WORLD_WIDTH / 4f / 2f, .6f);
