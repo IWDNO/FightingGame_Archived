@@ -4,9 +4,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
+import com.mygdx.game.factory.effects.Effect;
 import com.mygdx.game.views.MainScreen;
 
-import static com.mygdx.game.BodyFactory.BodyFactory.*;
+import static com.mygdx.game.factory.BodyFactory.*;
 import static com.mygdx.game.utils.Constants.*;
 
 public class Huntress extends Player {
@@ -45,9 +46,9 @@ public class Huntress extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor(Huntress.this, 2.25f, 1.3f, .8f, NORMAL_ATTACK);
+                addAttackSensor(Huntress.this, 2.25f, 1.3f, .8f, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(Huntress.this, NORMAL_ATTACK);
+                    public void run() {removeAttackSensor(Huntress.this, ATTACK_TYPE.NORMAL_ATTACK);
                     }
                 }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {
@@ -63,9 +64,9 @@ public class Huntress extends Player {
     protected void createEAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor(Huntress.this, 2.5f, 1f, .75f, E_ATTACK);
+                addAttackSensor(Huntress.this, 2.5f, 1f, .75f, ATTACK_TYPE.E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(Huntress.this, E_ATTACK);
+                    public void run() {removeAttackSensor(Huntress.this, ATTACK_TYPE.E_ATTACK);
                     }
                 }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {
@@ -75,5 +76,10 @@ public class Huntress extends Player {
                 }, eAttackDelay);
             }
         }, 0.3f);
+    }
+
+    @Override
+    protected Effect addEffect(ATTACK_TYPE attackType) {
+        return null;
     }
 }

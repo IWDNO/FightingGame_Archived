@@ -2,14 +2,12 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.mygdx.game.BodyFactory.BodyFactory;
 import com.mygdx.game.characters.Player;
 import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.utils.UserData;
 import com.mygdx.game.views.MainScreen;
 
-import static com.mygdx.game.utils.Constants.E_ATTACK;
-import static com.mygdx.game.utils.Constants.NORMAL_ATTACK;
+import static com.mygdx.game.utils.Constants.*;
 
 
 public class GameContactListener implements ContactListener {
@@ -29,30 +27,30 @@ public class GameContactListener implements ContactListener {
         System.out.println("start " + fa.getName() + " + " + fb.getName());
 
         //normal attack
-        if (check(fa, fb, "Player1-Attack1", "Player2")) {
-            ((UserData) findInFixtureList(player1, "Player1-Attack1").getUserData()).setDead(true);
-            DamageResult damage = player1.generateDamage(NORMAL_ATTACK);
+        if (check(fa, fb, "Player1-NORMAL_ATTACK", "Player2")) {
+            ((UserData) findInFixtureList(player1, "Player1-NORMAL_ATTACK").getUserData()).setDead(true);
+            DamageResult damage = player1.generateDamage(ATTACK_TYPE.NORMAL_ATTACK);
             Vector2 hitPosition = player2.getBody().getPosition();
             player2.takeDamage(damage, hitPosition);
 
 
-        } else if (check(fa, fb, "Player2-Attack1", "Player1")) {
-            ((UserData) findInFixtureList(player2, "Player2-Attack1").getUserData()).setDead(true);
-            DamageResult damage = player2.generateDamage(NORMAL_ATTACK);
+        } else if (check(fa, fb, "Player2-NORMAL_ATTACK", "Player1")) {
+            ((UserData) findInFixtureList(player2, "Player2-NORMAL_ATTACK").getUserData()).setDead(true);
+            DamageResult damage = player2.generateDamage(ATTACK_TYPE.NORMAL_ATTACK);
             Vector2 hitPosition = player1.getBody().getPosition();
             player1.takeDamage(damage, hitPosition);
 
         }
         // e attack
-        if (check(fa, fb, "Player1-Attack2", "Player2")) {
-            ((UserData) findInFixtureList(player1, "Player1-Attack2").getUserData()).setDead(true);
-            DamageResult damage = player1.generateDamage(E_ATTACK);
+        if (check(fa, fb, "Player1-E_ATTACK", "Player2")) {
+            ((UserData) findInFixtureList(player1, "Player1-E_ATTACK").getUserData()).setDead(true);
+            DamageResult damage = player1.generateDamage(ATTACK_TYPE.E_ATTACK);
             Vector2 hitPosition = player2.getBody().getPosition();
             player2.takeDamage(damage, hitPosition);
 
-        } else if (check(fa, fb, "Player2-Attack2", "Player1")) {
-            ((UserData) findInFixtureList(player2, "Player2-Attack2").getUserData()).setDead(true);
-            DamageResult damage = player2.generateDamage(E_ATTACK);
+        } else if (check(fa, fb, "Player2-E_ATTACK", "Player1")) {
+            ((UserData) findInFixtureList(player2, "Player2-E_ATTACK").getUserData()).setDead(true);
+            DamageResult damage = player2.generateDamage(ATTACK_TYPE.E_ATTACK);
             Vector2 hitPosition = player1.getBody().getPosition();
             player1.takeDamage(damage, hitPosition);
         }

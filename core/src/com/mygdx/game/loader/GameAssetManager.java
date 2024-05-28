@@ -7,8 +7,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameAssetManager {
     public final AssetManager manager = new AssetManager();

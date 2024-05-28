@@ -18,7 +18,15 @@ public class Constants {
             Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.PERIOD, Input.Keys.COMMA
     );
 
-    public static final int NORMAL_ATTACK = 1;
-    public static final int E_ATTACK = 2;
-    public static final int Q_ATTACK = 3;
+    public enum ATTACK_TYPE {
+        NORMAL_ATTACK,
+        E_ATTACK,
+        Q_ATTACK
+    }
+
+    public enum EFFECT_TYPE {
+        DoT,
+        SLOWNESS,
+        DEF_REDUCTION
+    }
 }

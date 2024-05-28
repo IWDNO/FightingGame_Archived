@@ -8,15 +8,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
-import com.mygdx.game.animator.DamageText;
+import com.mygdx.game.factory.DamageText;
 import com.mygdx.game.controller.ControlScheme;
+import com.mygdx.game.factory.effects.Effect;
 import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.views.MainScreen;
 
 import java.util.Set;
 
-import static com.mygdx.game.BodyFactory.BodyFactory.createDefaultPlayer;
-import static com.mygdx.game.BodyFactory.BodyFactory.removeDeadFixtures;
+import static com.mygdx.game.factory.BodyFactory.createDefaultPlayer;
+import static com.mygdx.game.factory.BodyFactory.removeDeadFixtures;
 import static com.mygdx.game.utils.Constants.*;
 
 public abstract class Player {
@@ -112,6 +113,7 @@ public abstract class Player {
     protected abstract void createNormalAttack();    // configurable depending on animations
 
     protected abstract void createEAttack();    // configurable depending on animations
+    protected abstract Effect addEffect(ATTACK_TYPE attackType);
 
     protected void useNormalAttack() {
         if (attackCount < 1) {
@@ -136,17 +138,20 @@ public abstract class Player {
     protected void useQ() {
     }
 
-    public DamageResult generateDamage(int attackType) {
+    public DamageResult generateDamage(ATTACK_TYPE attackType) {
         boolean isCritical = body.getLinearVelocity().y < 0;
         float damage = getAttackScale(attackType) * ATK;
         if (isCritical) damage *= 2;
-
-        return new DamageResult(damage, isCritical);
+        DamageResult damageResult = new DamageResult(damage, isCritical);
+        damageResult.effect = addEffect(attackType);
+        return damageResult;
     }
 
     public void takeDamage(DamageResult damage, Vector2 hitPosition) {
         damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
         currentHealth -= damage.value;
+
+        if (damage.getEffect() != null) damage.getEffect().run(this);
 
         damageWriter.spawn(hitPosition, damage);
 
@@ -161,12 +166,11 @@ public abstract class Player {
         scheduleAnimation(idleAnimation, HIT_ANIMATION_TIME);
     }
 
-    protected float getAttackScale(int attack) { //TODO сделать что-то с числами
+    protected float getAttackScale(ATTACK_TYPE attack) { //TODO сделать что-то с числами
         return switch (attack) {
             case NORMAL_ATTACK -> NORMAL_ATTACK_SCALE;
             case E_ATTACK -> E_ATTACK_SCALE;
             case Q_ATTACK -> Q_ATTACK_SCALE;
-            default -> 1f;
         };
     }
 

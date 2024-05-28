@@ -1,4 +1,4 @@
-package com.mygdx.game.animator;
+package com.mygdx.game.factory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -63,11 +63,16 @@ public class DamageText {
 
             float alpha = 1 - (lifeTime / MAX_LIFE_TIME);
 
-            if (playerNumber == 1) {
+            if (damage.effectType != null) {
+                font.setColor(0.721f, 0.219f, 0.321f, alpha);
+                font.getData().setScale(1 / 40f);
+            }
+            else if (playerNumber == 1) {
                 font.setColor(1, 0, 0, alpha); // Red color for player 1
             } else {
                 font.setColor(0, 0, 1, alpha); // Blue color for player 2
             }
+
             if (damage.isCritical) {
                 font.draw(batch, "Crit", position.x, position.y + 1);
             }

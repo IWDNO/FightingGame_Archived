@@ -15,7 +15,7 @@ import com.mygdx.game.animator.Animator;
 import com.mygdx.game.characters.*;
 
 import static com.mygdx.game.utils.Constants.*;
-import static com.mygdx.game.BodyFactory.BodyFactory.createWorldBounds;
+import static com.mygdx.game.factory.BodyFactory.createWorldBounds;
 
 public class MainScreen implements Screen {
     public FightingGame parent;
@@ -27,7 +27,6 @@ public class MainScreen implements Screen {
     private InputAdapter controller;
     private SpriteBatch sb;
     private Sprite mapSprite;
-    private Sprite platformSprite;
 
     private final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3;
 

@@ -1,6 +1,6 @@
 package com.mygdx.game.utils;
 
-public class PlayerStates {
+public class PlayerStates { // TODO delete this
     public static final int RUN = 1;
     public static final int IDLE = 2;
     public static final int JUMP = 3;

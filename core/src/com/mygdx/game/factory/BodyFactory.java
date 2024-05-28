@@ -1,16 +1,11 @@
-package com.mygdx.game.BodyFactory;
+package com.mygdx.game.factory;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.characters.Player;
 import com.mygdx.game.utils.UserData;
 
-import java.util.Iterator;
-import java.util.List;
-
-import static com.mygdx.game.utils.Constants.PLAYER_HEIGHT;
-import static com.mygdx.game.utils.Constants.PLAYER_WIDTH;
+import static com.mygdx.game.utils.Constants.*;
 
 public class BodyFactory {
 
@@ -42,7 +37,7 @@ public class BodyFactory {
         return player;
     }
 
-    public static void addAttackSensor(Player player, float radius, float offsetX, float offsetY, int attackType) {
+    public static void addAttackSensor(Player player, float radius, float offsetX, float offsetY, ATTACK_TYPE attackType) {
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(radius);
 
@@ -54,7 +49,7 @@ public class BodyFactory {
         circleShape.setPosition(new Vector2(offsetX, offsetY));
 
         Fixture sensorFixture = player.getBody().createFixture(fixtureDef);
-        sensorFixture.setUserData(new UserData("Player" + player.getPlayerNumber() + "-Attack" + attackType));
+        sensorFixture.setUserData(new UserData("Player" + player.getPlayerNumber() + "-" + attackType));
 
         circleShape.dispose();
     }
@@ -77,7 +72,7 @@ public class BodyFactory {
 //        circleShape.dispose();
 //    }
 
-    public static void removeAttackSensor(Player player, int attackType) {
+    public static void removeAttackSensor(Player player, ATTACK_TYPE attackType) {
         for (Fixture fixture : player.getBody().getFixtureList()) {
             if (("Player" + player.getPlayerNumber() + "-Attack" + attackType).equals(((UserData) fixture.getUserData()).getName())) {
                 player.getBody().destroyFixture(fixture);

@@ -4,9 +4,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
+import com.mygdx.game.factory.effects.Effect;
 import com.mygdx.game.views.MainScreen;
 
-import static com.mygdx.game.BodyFactory.BodyFactory.*;
+import static com.mygdx.game.factory.BodyFactory.*;
 import static com.mygdx.game.utils.Constants.*;
 
 public class King extends Player {
@@ -44,9 +45,9 @@ public class King extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor(King.this, 1.6f, 2.85f, 0, NORMAL_ATTACK);
+                addAttackSensor(King.this, 1.6f, 2.85f, 0, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(King.this, NORMAL_ATTACK);
+                    public void run() {removeAttackSensor(King.this, ATTACK_TYPE.NORMAL_ATTACK);
                     }
                 }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {
@@ -62,9 +63,9 @@ public class King extends Player {
     protected void createEAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor(King.this, 3.25f, 1.5f, 1.4f, E_ATTACK);
+                addAttackSensor(King.this, 3.25f, 1.5f, 1.4f, ATTACK_TYPE.E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(King.this, E_ATTACK);
+                    public void run() {removeAttackSensor(King.this, ATTACK_TYPE.E_ATTACK);
                     }
                 }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {
@@ -74,5 +75,10 @@ public class King extends Player {
                 }, eAttackDelay);
             }
         }, 0.2f);
+    }
+
+    @Override
+    protected Effect addEffect(ATTACK_TYPE attackType) {
+        return null;
     }
 }

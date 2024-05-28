@@ -4,9 +4,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
+import com.mygdx.game.factory.effects.Effect;
 import com.mygdx.game.views.MainScreen;
 
-import static com.mygdx.game.BodyFactory.BodyFactory.*;
+import static com.mygdx.game.factory.BodyFactory.*;
 import static com.mygdx.game.utils.Constants.*;
 
 public class HeroKnight extends Player {
@@ -45,9 +46,9 @@ public class HeroKnight extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor(HeroKnight.this, 1.75f, .75f, .5f, NORMAL_ATTACK);
+                addAttackSensor(HeroKnight.this, 1.75f, .75f, .5f, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(HeroKnight.this, NORMAL_ATTACK);
+                    public void run() {removeAttackSensor(HeroKnight.this, ATTACK_TYPE.NORMAL_ATTACK);
                     }
                 }, 0.2f);
                 timer.scheduleTask(new Timer.Task() {
@@ -63,9 +64,9 @@ public class HeroKnight extends Player {
     protected void createEAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                addAttackSensor(HeroKnight.this, 3f, 2.2f, .5f, E_ATTACK);
+                addAttackSensor(HeroKnight.this, 3f, 2.2f, .5f, ATTACK_TYPE.E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(HeroKnight.this, E_ATTACK);
+                    public void run() {removeAttackSensor(HeroKnight.this, ATTACK_TYPE.E_ATTACK);
                     }
                 }, 0.2f);
                 timer.scheduleTask(new Timer.Task() {
@@ -75,5 +76,10 @@ public class HeroKnight extends Player {
                 }, eAttackDelay);
             }
         }, 0.3f);
+    }
+
+    @Override
+    protected Effect addEffect(ATTACK_TYPE attackType) {
+        return null;
     }
 }
