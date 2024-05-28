@@ -2,81 +2,101 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-
-
-//import com.mygdx.game.bodies.Player;
+import com.mygdx.game.BodyFactory.BodyFactory;
 import com.mygdx.game.characters.Player;
 import com.mygdx.game.utils.DamageResult;
+import com.mygdx.game.utils.UserData;
 import com.mygdx.game.views.MainScreen;
 
+
 public class GameContactListener implements ContactListener {
-    private MainScreen parent;
+    private Player player1, player2;
+
 
     public GameContactListener(MainScreen parent) {
-        this.parent = parent;
+        player1 = parent.player1;
+        player2 = parent.player2;
     }
-
 
     @Override
     public void beginContact(Contact contact) {
+        UserData fa = (UserData) contact.getFixtureA().getUserData();
+        UserData fb = (UserData) contact.getFixtureB().getUserData();
+        if (fa == null || fb == null) return;
+        System.out.println("start " + fa.getName() + " + " + fb.getName());
 
-//        Fixture fa = contact.getFixtureA();
-//        Fixture fb = contact.getFixtureB();
-//        System.out.println(fa.getBody().getUserData() + " + " + fb.getBody().getUserData());
-
-        if (check(contact, "Player1-attack", "Player2")) {
-            Player player1 = parent.player1, player2 = parent.player2;
+        //normal attack
+        if (check(fa, fb, "Player1-attack", "Player2")) {
+            ((UserData) findInFixtureList(player1, "Player1-attack").getUserData()).setDead(true);
             DamageResult damage = player1.generateDamage(1);
-
-            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-attack") ?
-                    contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
+            Vector2 hitPosition = player2.getBody().getPosition();
             player2.takeDamage(damage, hitPosition);
 
-        } else if (check(contact, "Player2-attack", "Player1")) {
-            Player player1 = parent.player1, player2 = parent.player2;
+
+        } else if (check(fa, fb, "Player2-attack", "Player1")) {
+            ((UserData) findInFixtureList(player2, "Player2-attack").getUserData()).setDead(true);
             DamageResult damage = player2.generateDamage(1);
-
-            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-attack") ?
-                    contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
+            Vector2 hitPosition = player1.getBody().getPosition();
             player1.takeDamage(damage, hitPosition);
+
         }
-
-        if (check(contact, "Player1-eAttack", "Player2")) {
-            Player player1 = parent.player1, player2 = parent.player2;
+        // e attack
+        if (check(fa, fb, "Player1-eAttack", "Player2")) {
+            ((UserData) findInFixtureList(player1, "Player1-eAttack").getUserData()).setDead(true);
             DamageResult damage = player1.generateDamage(2);
-
-            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player1-eAttack") ?
-                    contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
+            Vector2 hitPosition = player2.getBody().getPosition();
             player2.takeDamage(damage, hitPosition);
 
-        } else if (check(contact, "Player2-eAttack", "Player1")) {
-            Player player1 = parent.player1, player2 = parent.player2;
+        } else if (check(fa, fb, "Player2-eAttack", "Player1")) {
+            ((UserData) findInFixtureList(player2, "Player2-eAttack").getUserData()).setDead(true);
             DamageResult damage = player2.generateDamage(2);
-
-            Vector2 hitPosition = contact.getFixtureA().getBody().getUserData().equals("Player2-eAttack") ?
-                    contact.getFixtureB().getBody().getPosition() : contact.getFixtureA().getBody().getPosition();
+            Vector2 hitPosition = player1.getBody().getPosition();
             player1.takeDamage(damage, hitPosition);
         }
     }
 
     @Override
     public void endContact(Contact contact) {
-
+        UserData fa = (UserData) contact.getFixtureA().getUserData();
+        UserData fb = (UserData) contact.getFixtureB().getUserData();
+        if (fa == null || fb == null) return;
+        System.out.println("end " + fa.getName() + " + " + fb.getName());
     }
+
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
     }
+
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
     }
 
-    private boolean check(Contact contact, String data1, String data2) {
-        Body a = contact.getFixtureA().getBody();
-        Body b = contact.getFixtureB().getBody();
-        if ((a.getUserData() != null) && (b.getUserData() != null)) {
-            return (a.getUserData().equals(data1) && b.getUserData().equals(data2))
-                    || (a.getUserData().equals(data2) && b.getUserData().equals(data1));
+    private boolean check(UserData data1, UserData data2, String name1, String name2) {
+        if ((data1 != null) && (data2 != null)) {
+            return ((data1.getName().equals(name1) && data2.getName().equals(name2))
+                    || (data2.getName().equals(name1) && data1.getName().equals(name2)));
         }
         return false;
+    }
+
+    private Fixture find(Contact contact, String userData) {
+        Fixture a = contact.getFixtureA();
+        Fixture b = contact.getFixtureB();
+        if ((a.getUserData() != null) && (b.getUserData() != null)) {
+            if (a.getUserData().equals(userData)) return a;
+            return b;
+        }
+        return null;
+    }
+
+    private Fixture findInFixtureList(Player player, String string) {
+        Fixture result = null;
+        for (Fixture fixture : player.getBody().getFixtureList()) {
+            if ((string).equals(((UserData) fixture.getUserData()).getName())) {
+                result = fixture;
+                break;
+            }
+        }
+        return result;
     }
 }

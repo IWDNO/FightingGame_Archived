@@ -42,7 +42,6 @@ public class MainScreen implements Screen {
 
     public MainScreen(FightingGame fg) {
         parent = fg;
-        contactListener = new GameContactListener(this);
 
         animator.create();
         mapSprite = new Sprite(new Texture(Gdx.files.internal("map/bg.png")));
@@ -58,7 +57,6 @@ public class MainScreen implements Screen {
     public void show() {
         world = new World(new Vector2(0, -20), false);
         debugRenderer = new Box2DDebugRenderer();
-        world.setContactListener(contactListener);
 
         camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
         sb = new SpriteBatch();
@@ -80,6 +78,9 @@ public class MainScreen implements Screen {
 
         player1 = new SaiHan(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
         player2 = new King(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
+        contactListener = new GameContactListener(this);
+
+        world.setContactListener(contactListener);
 
     }
 
@@ -93,8 +94,8 @@ public class MainScreen implements Screen {
         sb.begin();
 
         //render background & platforms
-        mapSprite.draw(sb);
-
+//        mapSprite.draw(sb);
+//        animator.render(sb);
         sb.draw(platform, -WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,
                 WORLD_WIDTH / 4f / 2f, .6f);
         sb.draw(platform, WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,

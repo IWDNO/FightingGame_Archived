@@ -1,9 +1,12 @@
 package com.mygdx.game.characters;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
 import com.mygdx.game.views.MainScreen;
+
+import static com.mygdx.game.BodyFactory.BodyFactory.*;
 
 public class SaiHan extends Player {
 
@@ -18,7 +21,7 @@ public class SaiHan extends Player {
         this.zoom = 1.1f;
         this.attackDelay = .4f;
         this.eAttackDelay = 5f;
-        this.eAttackAnimationDelay = .4f;
+        this.eAttackAnimationTime = .4f;
         this.currentHealth = MAX_HP;
         this.HIT_ANIMATION_TIME = .3f;
         this.speed *= 1.25f;
@@ -39,4 +42,39 @@ public class SaiHan extends Player {
         deathAnimation = AnimationFactory.create(7, .15f, 1, "images/SaiHan/Death.png");
     }
 
+    @Override
+    protected void createNormalAttack() {
+        timer.scheduleTask(new Timer.Task() {
+            public void run() {
+                addAttackSensor(body, 1.5f, isFacingRight, playerNumber);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {removeAttackSensor(body, playerNumber);
+                    }
+                }, 0.3f);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {
+                        attackCount--;
+                    }
+                }, attackDelay);
+            }
+        }, 0.2f);
+    }
+
+    @Override
+    protected void createEAttack() {
+        timer.scheduleTask(new Timer.Task() {
+            public void run() {
+                addAttackSensor1(body, 1.5f, isFacingRight, playerNumber);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {removeAttackSensor1(body, playerNumber);
+                    }
+                }, 0.8f);
+                timer.scheduleTask(new Timer.Task() {
+                    public void run() {
+                        eAttackCount--;
+                    }
+                }, eAttackDelay);
+            }
+        }, 0.2f);
+    }
 }

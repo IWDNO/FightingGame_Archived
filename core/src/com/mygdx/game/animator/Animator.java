@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class Animator  {
+import static com.mygdx.game.utils.Constants.*;
+
+public class Animator {
 
     // Constant rows and columns of the sprite sheet
-    private static final int FRAME_COLS = 6, FRAME_ROWS = 1;
+    private static final int FRAME_COLS = 9, FRAME_ROWS = 2;
 
     // Objects used
     Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
@@ -25,7 +27,7 @@ public class Animator  {
     public void create() {
 
         // Load the sprite sheet as a Texture
-        walkSheet = new Texture(Gdx.files.internal("images/Wizard Pack/Dude_Monster_Run_6.png"));
+        walkSheet = new Texture(Gdx.files.internal("animateedbackground.png"));
 
         // Use the split utility method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are
@@ -49,7 +51,6 @@ public class Animator  {
 
         // Instantiate a SpriteBatch for drawing and reset the elapsed animation
         // time to 0
-        spriteBatch = new SpriteBatch();
         stateTime = 0f;
     }
 
@@ -57,11 +58,8 @@ public class Animator  {
         stateTime += Gdx.graphics.getDeltaTime();
         // Get current frame of animation for the current stateTime
         TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
-        spriteBatch.begin();
-        sb.draw(currentFrame, 1250, 800, 350, 100); // Draw current frame at (50, 50)
-        spriteBatch.end();
+        sb.draw(currentFrame, -WORLD_WIDTH / 2, -WORLD_HEIGHT / 2, WORLD_WIDTH, WORLD_HEIGHT); // Draw current frame at (50, 50)
     }
-
 
 
     public void dispose() { // SpriteBatches and Textures must always be disposed

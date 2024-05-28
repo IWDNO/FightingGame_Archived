@@ -28,7 +28,9 @@ public abstract class Player {
     protected float zoom;
     protected float attackDelay;
     protected float eAttackDelay;
-    protected float eAttackAnimationDelay;
+    protected float qAttackDelay;
+    protected float eAttackAnimationTime;
+    protected float qAttackAnimationTime;
     protected float speed = 10;
     protected float dashDuration = .2f;
     protected float dashSpeed = 20f;
@@ -38,7 +40,7 @@ public abstract class Player {
     protected final MainScreen screen;
     protected final int playerNumber;
     protected final ControlScheme cs;
-    protected final Body player;
+    protected final Body body;
 
     protected float attackCount = 0;
     protected float eAttackCount = 0;
@@ -76,8 +78,8 @@ public abstract class Player {
         this.playerNumber = playerNumber;
         this.damageWriter = new DamageText(playerNumber);
         this.cs = cs;
-        player = createPlayer(x, y);
         isFacingRight = playerNumber == 1;
+        body = createDefaultPlayer(x, y, world, playerNumber);
 
         setAnimations();
         currentAnimation = idleAnimation;
@@ -94,64 +96,42 @@ public abstract class Player {
         return currentHealth;
     }
 
+    public Body getBody() {
+        return body;
+    }
 
     protected abstract void setAnimations();
 
-    public Body createPlayer(float x, float y) {
-        Body player = createDefaultPlayer(x, y, world);
-        player.setUserData(String.format("Player%d", playerNumber));
-        return player;
-    }
 
-    public void useNormalAttack(Body player, boolean facingDirection) {
+    protected abstract void createNormalAttack();    // configurable depending on animations
+
+    protected abstract void createEAttack();    // configurable depending on animations
+
+    public void useNormalAttack() {
         if (attackCount < 1) {
             attackCount++;
-            timer.scheduleTask(new Timer.Task() {
-                public void run() {
-                    Body attack = createDefaultAttack(player.getPosition().x, player.getPosition().y, 1.5f, world, facingDirection);
-                    attack.setUserData(String.format("Player%d-attack", playerNumber));
-                    timer.scheduleTask(new Timer.Task() {
-                        public void run() {
-                            world.destroyBody(attack);
-                        }
-                    }, 0.3f);
-                    timer.scheduleTask(new Timer.Task() {
-                        public void run() {
-                            attackCount--;
-                        }
-                    }, attackDelay);
-                }
-            }, 0.2f);
+            stateTime = 0f;
+            currentAnimation = attack1Animation;
+            scheduleAnimation(idleAnimation, attackDelay);
+            createNormalAttack();
         }
     }
 
-    public void useE(Body player, boolean facingDirection) {
+    public void useE() {
         if (eAttackCount < 1) {
             eAttackCount++;
-            timer.scheduleTask(new Timer.Task() {
-                public void run() {
-                    Body attack = createDefaultEAttack(player.getPosition().x, player.getPosition().y, 2.5f, world, facingDirection);
-                    attack.setUserData(String.format("Player%d-eAttack", playerNumber));
-                    timer.scheduleTask(new Timer.Task() {
-                        public void run() {
-                            world.destroyBody(attack);
-                        }
-                    }, 0.8f);
-                    timer.scheduleTask(new Timer.Task() {
-                        public void run() {
-                            eAttackCount--;
-                        }
-                    }, eAttackDelay);
-                }
-            }, 0.2f);
+            stateTime = 0f;
+            currentAnimation = attack2Animation;
+            scheduleAnimation(idleAnimation, eAttackAnimationTime);
+            createEAttack();
         }
     }
 
-    public void useQ(Body player) {
+    public void useQ() {
     }
 
     public DamageResult generateDamage(int attackType) {
-        boolean isCritical = player.getLinearVelocity().y < 0;
+        boolean isCritical = body.getLinearVelocity().y < 0;
         float damage = getAttackScale(attackType) * ATK;
         if (isCritical) damage *= 2;
 
@@ -159,8 +139,8 @@ public abstract class Player {
     }
 
     public void takeDamage(DamageResult damage, Vector2 hitPosition) {
-        damage.value = (damage.value / DEF_SCALE);
-        currentHealth -= isDashing ? damage.value / 2f : damage.value;
+        damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
+        currentHealth -= damage.value;
 
         damageWriter.spawn(hitPosition, damage);
 
@@ -175,7 +155,7 @@ public abstract class Player {
         scheduleAnimation(idleAnimation, HIT_ANIMATION_TIME);
     }
 
-    public float getAttackScale(int attack) {
+    public float getAttackScale(int attack) { //TODO сделать что-то с числами
         return switch (attack) {
             case 1 -> NORMAL_ATTACK_SCALE;
             case 2 -> E_ATTACK_SCALE;
@@ -185,17 +165,18 @@ public abstract class Player {
     }
 
     public void update(SpriteBatch sb) {
+        removeDeadFixtures(this);
         damageWriter.render(sb);
         updateFacingDirection();
 
-        //update animations according to player movement
+        // set animation according to player movement if not locked animation
         if (!unbreakableAnimations.contains(currentAnimation)) {
             if (isDashing) {
-                if (player.getLinearVelocity().y == 0) currentAnimation = dashAnimation;
+                if (body.getLinearVelocity().y == 0) currentAnimation = dashAnimation;
                 else currentAnimation = jumpDashAnimation;
-            } else if (player.getLinearVelocity().y > 0) currentAnimation = jumpAnimation;
-            else if (player.getLinearVelocity().y < 0) currentAnimation = fallAnimation;
-            else if (player.getLinearVelocity().x != 0) currentAnimation = runAnimation;
+            } else if (body.getLinearVelocity().y > 0) currentAnimation = jumpAnimation;
+            else if (body.getLinearVelocity().y < 0) currentAnimation = fallAnimation;
+            else if (body.getLinearVelocity().x != 0) currentAnimation = runAnimation;
             else currentAnimation = idleAnimation;
         }
 
@@ -206,17 +187,17 @@ public abstract class Player {
         float width = currentFrame.getRegionWidth() / WORLD_HEIGHT * zoom;
         float height = currentFrame.getRegionHeight() / WORLD_HEIGHT * zoom;
         if (isFacingRight)
-            sb.draw(currentFrame, player.getPosition().x - width / 2f,
-                    player.getPosition().y - height / 2f,
+            sb.draw(currentFrame, body.getPosition().x - width / 2f,
+                    body.getPosition().y - height / 2f,
                     width, height);
         else
-            sb.draw(currentFrame, player.getPosition().x + width / 2f,
-                    player.getPosition().y - height / 2f,
+            sb.draw(currentFrame, body.getPosition().x + width / 2f,
+                    body.getPosition().y - height / 2f,
                     -width, height);
 
         if (currentHealth <= 0) {
-            player.setLinearVelocity(player.getLinearVelocity().y == 0 ? 0 : player.getLinearVelocity().x,
-                    player.getLinearVelocity().y);
+            body.setLinearVelocity(body.getLinearVelocity().y == 0 ? 0 : body.getLinearVelocity().x,
+                    body.getLinearVelocity().y);
             return;
         }
 
@@ -235,44 +216,26 @@ public abstract class Player {
         // up
         if (Gdx.input.isKeyJustPressed(cs.jumpKey) && jumpCounter < 2) {
             jumpCounter++;
-            float force = player.getMass() * 18000;
-            player.setLinearVelocity(player.getLinearVelocity().x, 0);
-            player.applyLinearImpulse(new Vector2(0, force), player.getPosition(), true);
+            float force = body.getMass() * 18000;
+            body.setLinearVelocity(body.getLinearVelocity().x, 0);
+            body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
         }
-        if (player.getLinearVelocity().y == 0) jumpCounter = 0;
+        if (body.getLinearVelocity().y == 0) jumpCounter = 0;
 
-        // apply force
-        player.setLinearVelocity(player.getLinearVelocity().x, player.getLinearVelocity().y < 10
-                ? player.getLinearVelocity().y : 10);
+        // apply force (wtf is going on here?)
+        body.setLinearVelocity(body.getLinearVelocity().x, body.getLinearVelocity().y < 10
+                ? body.getLinearVelocity().y : 10);
         if (!isDashing) {
-            player.setLinearVelocity(velX * speed, player.getLinearVelocity().y);
+            body.setLinearVelocity(velX * speed, body.getLinearVelocity().y);
         }
 
         // dash
-        if (!isDashing && Gdx.input.isKeyJustPressed(cs.dashKey)) {
-            dash();
-        }
+        if (!isDashing && Gdx.input.isKeyJustPressed(cs.dashKey)) dash();
 
-        //attacks TODO вынести обработку анимаций в метод использования аттак (может быть)
-        if (Gdx.input.isKeyJustPressed(cs.attackKey)) {
-            if (attackCount < 1) {
-                stateTime = 0f;
-                currentAnimation = attack1Animation;
-                scheduleAnimation(idleAnimation, attackDelay);
-                useNormalAttack(player, isFacingRight);
-            }
-        }
-        if (Gdx.input.isKeyJustPressed(cs.eKey)) {
-            if (eAttackCount < 1) {
-                stateTime = 0f;
-                currentAnimation = attack2Animation;
-                scheduleAnimation(idleAnimation, eAttackAnimationDelay);
-                useE(player, isFacingRight);
-            }
-        }
-        if (Gdx.input.isKeyJustPressed(cs.qkey)) {
-            useQ(player);
-        }
+        //attacks
+        if (Gdx.input.isKeyJustPressed(cs.attackKey)) useNormalAttack();
+        else if (Gdx.input.isKeyJustPressed(cs.eKey)) useE();
+        else if (Gdx.input.isKeyJustPressed(cs.qkey)) useQ();
     }
 
     public void dash() {
@@ -290,15 +253,15 @@ public abstract class Player {
             }
         }, dashDelay);
 
-        float impulseX = player.getMass() * dashSpeed;
+        float impulseX = body.getMass() * dashSpeed;
         impulseX = isFacingRight ? impulseX : -impulseX;
-        player.applyLinearImpulse(new Vector2(impulseX, 0), player.getPosition(), true);
+        body.applyLinearImpulse(new Vector2(impulseX, 0), body.getPosition(), true);
     }
 
     public void updateFacingDirection() {
         if (isDashing || unbreakableAnimations.contains(currentAnimation)) return;
-        if (player.getLinearVelocity().x > 0) isFacingRight = true;
-        if (player.getLinearVelocity().x < 0) isFacingRight = false;
+        if (body.getLinearVelocity().x > 0) isFacingRight = true;
+        if (body.getLinearVelocity().x < 0) isFacingRight = false;
     }
 
     public void scheduleAnimation(Animation<TextureRegion> animation, float delaySec) {
