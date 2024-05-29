@@ -14,15 +14,15 @@ public class King extends Player {
 
     public King(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
         super(world, playerNumber, screen, cs, x, y);
-        this.MAX_HP = 1000;
-        this.ATK = 100;
+        this.MAX_HP = 1100;
+        this.ATK = 80;
         this.DEF_SCALE = 1.1f;
         this.NORMAL_ATTACK_SCALE = .75f;
-        this.E_ATTACK_SCALE = 1.25f;
+        this.E_ATTACK_SCALE = 1.5f;
         this.Q_ATTACK_SCALE = 1f;
         this.zoom = 1.25f;
         this.attackDelay = .4f;
-        this.eAttackDelay = 5f;
+        this.eAttackDelay = 8f;
         this.eAttackAnimationTime = .4f;
         this.currentHealth = MAX_HP;
         this.HIT_ANIMATION_TIME = .4f;
@@ -34,8 +34,8 @@ public class King extends Player {
         jumpAnimation = AnimationFactory.create(2, .1f, 1, "images/King/Jump.png");
         fallAnimation = AnimationFactory.create(2, .1f, 1, "images/King/Fall.png");
         hitAnimation = AnimationFactory.create(4, .1f, 1, "images/King/Hit.png");
-        attack1Animation = AnimationFactory.create(4, .1f, 1, "images/King/Attack1.png");
-        attack2Animation = AnimationFactory.create(4, .1f, 1, "images/King/Attack3.png");
+        normalAttackAnimation = AnimationFactory.create(4, .1f, 1, "images/King/Attack1.png");
+        eAttackAnimation = AnimationFactory.create(4, .1f, 1, "images/King/Attack3.png");
         dashAnimation = AnimationFactory.create(8, .1f, 1, "images/King/Dash.png");
         jumpDashAnimation = AnimationFactory.create(2, .1f, 1, "images/King/JumpDash.png");
         deathAnimation = AnimationFactory.create(6, .15f, 1, "images/King/Death.png");

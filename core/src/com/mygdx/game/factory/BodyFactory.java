@@ -74,7 +74,7 @@ public class BodyFactory {
 
     public static void removeAttackSensor(Player player, ATTACK_TYPE attackType) {
         for (Fixture fixture : player.getBody().getFixtureList()) {
-            if (("Player" + player.getPlayerNumber() + "-Attack" + attackType).equals(((UserData) fixture.getUserData()).getName())) {
+            if (("Player" + player.getPlayerNumber() + "-" + attackType).equals(((UserData) fixture.getUserData()).getName())) {
                 player.getBody().destroyFixture(fixture);
                 break;
             }

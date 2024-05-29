@@ -14,15 +14,15 @@ public class HeroKnight extends Player {
 
     public HeroKnight(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
         super(world, playerNumber, screen, cs, x ,y);
-        this.MAX_HP = 1000;
-        this.ATK = 100;
-        this.DEF_SCALE = 1.1f;
-        this.NORMAL_ATTACK_SCALE = .75f;
-        this.E_ATTACK_SCALE = 1.25f;
+        this.MAX_HP = 750;
+        this.ATK = 120;
+        this.DEF_SCALE = 1.5f;
+        this.NORMAL_ATTACK_SCALE = 1.1f;
+        this.E_ATTACK_SCALE = 2f;
         this.Q_ATTACK_SCALE = 1f;
         this.zoom = 1.25f;
         this.attackDelay = .7f;
-        this.eAttackDelay = 5f;
+        this.eAttackDelay = 8f;
         this.eAttackAnimationTime = .7f;
         this.currentHealth = MAX_HP;
         this.HIT_ANIMATION_TIME = .3f;
@@ -34,12 +34,12 @@ public class HeroKnight extends Player {
         runAnimation = AnimationFactory.create(8, .1f, 1, "images/HeroKnight/Run.png");
         jumpAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/Jump.png");
         fallAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/Fall.png");
-        hitAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/Hit.png");
-        attack1Animation = AnimationFactory.create(7, .1f, 1, "images/HeroKnight/Attack1.png");
-        attack2Animation = AnimationFactory.create(7, .1f, 1, "images/HeroKnight/Attack2.png");
+        hitAnimation = AnimationFactory.create(4, .1f, 1, "images/HeroKnight/Hit.png");
+        normalAttackAnimation = AnimationFactory.create(7, .1f, 1, "images/HeroKnight/Attack1.png");
+        eAttackAnimation = AnimationFactory.create(7, .1f, 1, "images/HeroKnight/Attack2.png");
         dashAnimation = AnimationFactory.create(8, .1f, 1, "images/HeroKnight/Dash.png");
         jumpDashAnimation = AnimationFactory.create(3, .1f, 1, "images/HeroKnight/JumpDash.png");
-        deathAnimation = AnimationFactory.create(7, .15f, 1, "images/HeroKnight/Death.png");
+        deathAnimation = AnimationFactory.create(11, .15f, 1, "images/HeroKnight/Death.png");
     }
 
     @Override

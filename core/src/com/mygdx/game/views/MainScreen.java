@@ -76,7 +76,7 @@ public class MainScreen implements Screen {
         createPlatforms();
 
         player1 = new SaiHan(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
-        player2 = new King(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
+        player2 = new HeroKnight(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
         contactListener = new GameContactListener(this);
 
         world.setContactListener(contactListener);
@@ -93,8 +93,8 @@ public class MainScreen implements Screen {
         sb.begin();
 
         //render background & platforms
-        mapSprite.draw(sb);
-//        animator.render(sb);
+//        mapSprite.draw(sb);
+        animator.render(sb);
         sb.draw(platform, -WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,
                 WORLD_WIDTH / 4f / 2f, .6f);
         sb.draw(platform, WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,

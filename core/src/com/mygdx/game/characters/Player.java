@@ -57,8 +57,8 @@ public abstract class Player {
     protected Animation<TextureRegion> jumpAnimation;
     protected Animation<TextureRegion> fallAnimation;
     protected Animation<TextureRegion> hitAnimation;
-    protected Animation<TextureRegion> attack1Animation;
-    protected Animation<TextureRegion> attack2Animation;
+    protected Animation<TextureRegion> normalAttackAnimation;
+    protected Animation<TextureRegion> eAttackAnimation;
     protected Animation<TextureRegion> dashAnimation;
     protected Animation<TextureRegion> jumpDashAnimation;
     protected Animation<TextureRegion> deathAnimation;
@@ -83,7 +83,7 @@ public abstract class Player {
 
         setAnimations();
         currentAnimation = idleAnimation;
-        unbreakableAnimations = Set.of(attack1Animation, attack2Animation, hitAnimation, deathAnimation);
+        unbreakableAnimations = Set.of(normalAttackAnimation, eAttackAnimation, hitAnimation, deathAnimation);
 
         timer = new Timer();
     }
@@ -116,20 +116,22 @@ public abstract class Player {
     protected abstract Effect addEffect(ATTACK_TYPE attackType);
 
     protected void useNormalAttack() {
+        if (currentAnimation == hitAnimation || currentAnimation == eAttackAnimation) return;
         if (attackCount < 1) {
             attackCount++;
             stateTime = 0f;
-            currentAnimation = attack1Animation;
+            currentAnimation = normalAttackAnimation;
             scheduleAnimation(idleAnimation, attackDelay); // assuming that `attackDelay` is equal to the animation time
             createNormalAttack();
         }
     }
 
     protected void useE() {
+        if (currentAnimation == hitAnimation || currentAnimation == normalAttackAnimation) return;
         if (eAttackCount < 1) {
             eAttackCount++;
             stateTime = 0f;
-            currentAnimation = attack2Animation;
+            currentAnimation = eAttackAnimation;
             scheduleAnimation(idleAnimation, eAttackAnimationTime);
             createEAttack();
         }
@@ -147,21 +149,23 @@ public abstract class Player {
         return damageResult;
     }
 
-    public void takeDamage(DamageResult damage, Vector2 hitPosition) {
-        damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
-        currentHealth -= damage.value;
-
-        if (damage.getEffect() != null) damage.getEffect().run(this);
-
-        damageWriter.spawn(hitPosition, damage);
-
-        stateTime = 0f;
+    public void takeDamage(DamageResult damage) {
         if (currentHealth <= 0) {
+            if (currentAnimation != deathAnimation) stateTime = 0;
             currentAnimation = deathAnimation;
             currentHealth = 0;
             return;
         }
 
+        damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
+        currentHealth -= damage.value;
+
+        if (damage.getEffect() != null) damage.getEffect().run(this);
+
+        damageWriter.spawn(body.getPosition(), damage);
+
+        stateTime = 0;
+        if (unbreakableAnimations.contains(currentAnimation) && currentAnimation != hitAnimation) return;
         currentAnimation = hitAnimation;
         scheduleAnimation(idleAnimation, HIT_ANIMATION_TIME);
     }

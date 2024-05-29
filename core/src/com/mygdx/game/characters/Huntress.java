@@ -14,15 +14,15 @@ public class Huntress extends Player {
 
     public Huntress(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
         super(world, playerNumber, screen, cs, x ,y);
-        this.MAX_HP = 1000;
-        this.ATK = 100;
+        this.MAX_HP = 1200;
+        this.ATK = 110;
         this.DEF_SCALE = 1.1f;
-        this.NORMAL_ATTACK_SCALE = .75f;
-        this.E_ATTACK_SCALE = 1.25f;
+        this.NORMAL_ATTACK_SCALE = 1f;
+        this.E_ATTACK_SCALE = 1.5f;
         this.Q_ATTACK_SCALE = 1f;
         this.zoom = 1.4f;
         this.attackDelay = .5f;
-        this.eAttackDelay = 5f;
+        this.eAttackDelay = 8f;
         this.eAttackAnimationTime = .5f;
         this.currentHealth = MAX_HP;
         this.HIT_ANIMATION_TIME = .3f;
@@ -35,8 +35,8 @@ public class Huntress extends Player {
         jumpAnimation = AnimationFactory.create(2, .1f, 1, "images/Huntress/Jump.png");
         fallAnimation = AnimationFactory.create(2, .1f, 1, "images/Huntress/Fall.png");
         hitAnimation = AnimationFactory.create(3, .1f, 1, "images/Huntress/Hit.png");
-        attack1Animation = AnimationFactory.create(5, .1f, 1, "images/Huntress/Attack1.png");
-        attack2Animation = AnimationFactory.create(5, .1f, 1, "images/Huntress/Attack2.png");
+        normalAttackAnimation = AnimationFactory.create(5, .1f, 1, "images/Huntress/Attack1.png");
+        eAttackAnimation = AnimationFactory.create(5, .1f, 1, "images/Huntress/Attack2.png");
         dashAnimation = AnimationFactory.create(8, .1f, 1, "images/Huntress/Dash.png");
         jumpDashAnimation = AnimationFactory.create(2, .1f, 1, "images/Huntress/JumpDash.png");
         deathAnimation = AnimationFactory.create(7, .15f, 1, "images/Huntress/Death.png");

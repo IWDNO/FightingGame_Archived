@@ -21,7 +21,7 @@ public class DoT extends Effect {
                 if (elapsed < duration) {
                     DamageResult d = new DamageResult(DPT, false);
                     d.effectType = Constants.EFFECT_TYPE.DoT;
-                    player.takeDamage(d, player.getBody().getPosition());
+                    player.takeDamage(d);
                     elapsed += 1;
                 } else {
                     this.cancel();
