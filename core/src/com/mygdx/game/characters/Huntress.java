@@ -39,7 +39,7 @@ public class Huntress extends Player {
         eAttackAnimation = AnimationFactory.create(5, .1f, 1, "images/Huntress/Attack2.png");
         dashAnimation = AnimationFactory.create(8, .1f, 1, "images/Huntress/Dash.png");
         jumpDashAnimation = AnimationFactory.create(2, .1f, 1, "images/Huntress/JumpDash.png");
-        deathAnimation = AnimationFactory.create(7, .15f, 1, "images/Huntress/Death.png");
+        deathAnimation = AnimationFactory.create(8, .15f, 1, "images/Huntress/Death.png");
     }
 
     @Override

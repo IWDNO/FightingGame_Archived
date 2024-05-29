@@ -39,7 +39,7 @@ public class MainScreen implements Screen {
     private TextureRegion healthRegion;
     private TextureRegion healthOutline;
 
-    public MainScreen(FightingGame fg) {
+    public MainScreen(FightingGame fg, int player1Index, int player2Index) {
         parent = fg;
 
         animator.create();
@@ -50,12 +50,17 @@ public class MainScreen implements Screen {
         texture = new Texture("images/HealthBar.png");
         healthRegion = new TextureRegion(texture, 0, 0, 10, 80);
         healthOutline = new TextureRegion(texture, 26, 0, 10, 80);
+
+        world = new World(new Vector2(0, -20), false);
+        debugRenderer = new Box2DDebugRenderer();
+
+        player1 = createPlayer(player1Index, 1);
+        player2 = createPlayer(player2Index, 2);
     }
 
     @Override
     public void show() {
-        world = new World(new Vector2(0, -20), false);
-        debugRenderer = new Box2DDebugRenderer();
+
 
         camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
         sb = new SpriteBatch();
@@ -75,8 +80,6 @@ public class MainScreen implements Screen {
         createBounds();
         createPlatforms();
 
-        player1 = new SaiHan(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
-        player2 = new HeroKnight(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
         contactListener = new GameContactListener(this);
 
         world.setContactListener(contactListener);
@@ -204,5 +207,22 @@ public class MainScreen implements Screen {
         }
     }
 
-
+    private Player createPlayer(int playerIndex, int playerNumber) { //TODO change a lot of things
+        if (playerNumber == 1)
+            return switch (playerIndex) {
+                case 0 -> new SaiHan(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
+                case 1 -> new King(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
+                case 2 -> new Huntress(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
+                case 3 -> new HeroKnight(world, 1, this, PLAYER1_CONTROL_SCHEME, -15, -2);
+                default -> null;
+            };
+        else
+            return switch (playerIndex) {
+                case 0 -> new SaiHan(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
+                case 1 -> new King(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
+                case 2 -> new Huntress(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
+                case 3 -> new HeroKnight(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
+                default -> null;
+            };
+    }
 }
