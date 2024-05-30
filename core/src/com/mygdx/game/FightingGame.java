@@ -10,8 +10,6 @@ import com.mygdx.game.loader.GameAssetManager;
 import com.mygdx.game.views.*;
 
 public class FightingGame extends Game {
-
-	private LoadingScreen loadingScreen;
 	private MenuScreen menuScreen;
 	private MainScreen mainScreen;
 	private EndScreen endScreen;
@@ -26,8 +24,7 @@ public class FightingGame extends Game {
 
 	@Override
 	public void create() {
-		loadingScreen = new LoadingScreen(this);
-		setScreen(loadingScreen);
+		changeScreen(MENU);
 
 		assetManager.queueAddMusic();
 		assetManager.manager.finishLoading();

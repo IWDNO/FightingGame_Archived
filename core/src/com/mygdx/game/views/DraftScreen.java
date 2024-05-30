@@ -50,7 +50,7 @@ public class DraftScreen implements Screen {
         characterTextures[3] = new Texture("images/CharacterPreview/HeroKnight.png");
 
         characterDescriptions = new String[4];
-        characterDescriptions[0] = "Пидрила с мечем\nЕще может накладывать яд, пиздец";
+        characterDescriptions[0] = "Пидрила в маске\nЕще может накладывать яд, пиздец";
         characterDescriptions[1] = "Типо крутой мужик\nно мы знаем, что нет";
         characterDescriptions[2] = "Ахуеть, негры\nтак еще и с копьем";
         characterDescriptions[3] = "Самый, сука, душный персонаж";
@@ -62,7 +62,7 @@ public class DraftScreen implements Screen {
     @Override
     public void show() {
         player1Index = 0;
-        player2Index = 1;
+        player2Index = 0;
         isPlayer2Ready = false;
         isPlayer1Ready = false;
         isBothReady = false;

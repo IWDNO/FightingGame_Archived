@@ -67,7 +67,7 @@ public abstract class Player {
     protected float stateTime = 0f;
     protected Animation<TextureRegion> currentAnimation;
 
-    protected float HIT_ANIMATION_TIME = .4f;
+    protected float HIT_ANIMATION_TIME;
 
     protected Timer timer;
 
@@ -150,6 +150,12 @@ public abstract class Player {
     }
 
     public void takeDamage(DamageResult damage) {
+        damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
+        if (currentHealth > 0) damageWriter.spawn(body.getPosition(), damage);
+        currentHealth -= damage.value;
+
+        if (damage.getEffect() != null) damage.getEffect().run(this);
+
         if (currentHealth <= 0) {
             if (currentAnimation != deathAnimation) stateTime = 0;
             currentAnimation = deathAnimation;
@@ -157,20 +163,13 @@ public abstract class Player {
             return;
         }
 
-        damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
-        currentHealth -= damage.value;
-
-        if (damage.getEffect() != null) damage.getEffect().run(this);
-
-        damageWriter.spawn(body.getPosition(), damage);
-
-        stateTime = 0;
         if (unbreakableAnimations.contains(currentAnimation) && currentAnimation != hitAnimation) return;
+        stateTime = 0;
         currentAnimation = hitAnimation;
         scheduleAnimation(idleAnimation, HIT_ANIMATION_TIME);
     }
 
-    protected float getAttackScale(ATTACK_TYPE attack) { //TODO сделать что-то с числами
+    protected float getAttackScale(ATTACK_TYPE attack) {
         return switch (attack) {
             case NORMAL_ATTACK -> NORMAL_ATTACK_SCALE;
             case E_ATTACK -> E_ATTACK_SCALE;
@@ -281,9 +280,10 @@ public abstract class Player {
     protected void scheduleAnimation(Animation<TextureRegion> animation, float delaySec) {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
+                if (currentAnimation == deathAnimation) return;
                 stateTime = 0f;
                 currentAnimation = animation;
             }
-        }, delaySec);
+        }, delaySec - Gdx.graphics.getDeltaTime() * 1.1f);
     }
 }

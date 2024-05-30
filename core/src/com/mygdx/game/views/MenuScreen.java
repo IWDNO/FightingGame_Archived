@@ -33,30 +33,20 @@ public class MenuScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
-//        table.setDebug(true);
+
         stage.addActor(table);
 
-        TextButton newGame = new TextButton("New Game", skin);
+        TextButton draft = new TextButton("New game", skin);
         TextButton exit = new TextButton("Exit", skin);
-        TextButton draft = new TextButton("Draft", skin);
 
-        table.add(newGame).fillX().uniformX();
+        table.add(draft).fill().uniform();
         table.row().pad(30, 0, 0, 0);
         table.add(exit).fillX().uniformX();
-        table.row().pad(30, 0, 0, 0);
-        table.add(draft).fill().uniform();
 
         exit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.exit();
-            }
-        });
-
-        newGame.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent changeEvent, Actor actor) {
-                parent.changeScreen(FightingGame.APPLICATION);
             }
         });
         draft.addListener(new ChangeListener() {

@@ -17,7 +17,12 @@ public class DoT extends Effect {
     public void run(final Player player) {
         Timer.schedule(new Timer.Task() {
             private float elapsed = 0;
+
             public void run() {
+                if (player.getHP() <= 0) {
+                    this.cancel();
+                    return;
+                }
                 if (elapsed < duration) {
                     DamageResult d = new DamageResult(DPT, false);
                     d.effectType = Constants.EFFECT_TYPE.DoT;
