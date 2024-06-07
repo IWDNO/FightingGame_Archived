@@ -137,7 +137,7 @@ public class DraftScreen implements Screen {
         font.setColor(1, 1, 1, 1);
 
         // ready states TODO пиздец что это
-        font.getData().setScale(1 / 16f);
+        font.getData().setScale(1 / 16f / 8f);
         textWidth = getTextWidth("Не готов");
         if (isPlayer1Ready) {
             textWidth = getTextWidth("Готов");
@@ -154,7 +154,7 @@ public class DraftScreen implements Screen {
         } else font.draw(batch, "Не готов", WORLD_WIDTH / 4 - textWidth / 2, -6f);
 
         // player1 / player2
-        font.getData().setScale(1 / 32f);
+        font.getData().setScale(1 / 32f / 8f);
         textWidth = getTextWidth("1 Игрок");
         font.draw(batch, "1 Игрок", -WORLD_WIDTH / 4 - textWidth / 2, 7.5f);
         font.draw(batch, "2 Игрок", WORLD_WIDTH / 4 - textWidth / 2, 7.5f);
@@ -171,7 +171,7 @@ public class DraftScreen implements Screen {
         batch.draw(characterTextures[player2Index], WORLD_WIDTH / 4 - 2.5f, 0, 5, 5); // Позиция персонажа 2
 
         // Time remaining
-        font.getData().setScale(1 / 16f);
+        font.getData().setScale(1 / 16f / 8f);
         textWidth = getTextWidth(String.valueOf((int) (timeLimit - elapsedTime + 1)));
         if (isBothReady) font.setColor(1, 0, 0, 1);
         font.draw(batch, String.valueOf((int) (timeLimit - elapsedTime + 1)), 0 - textWidth / 2, 8);

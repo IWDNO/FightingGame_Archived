@@ -1,5 +1,7 @@
 package com.mygdx.game.factory.effects;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.characters.Player;
 import com.mygdx.game.utils.Constants;
@@ -11,27 +13,21 @@ public class DoT extends Effect {
     public DoT(float duration, float damagePerTick) {
         super(duration);
         this.DPT = damagePerTick;
+        this.effectTexture = new Texture("images/effects/DoT.png");
     }
 
     @Override
     public void run(final Player player) {
         Timer.schedule(new Timer.Task() {
-            private float elapsed = 0;
-
             public void run() {
-                if (player.getHP() <= 0) {
+                if (player.getHP() <= 0 || isDone()) {
                     this.cancel();
                     return;
                 }
-                if (elapsed < duration) {
-                    DamageResult d = new DamageResult(DPT, false);
-                    d.effectType = Constants.EFFECT_TYPE.DoT;
-                    player.takeDamage(d);
-                    elapsed += 1;
-                } else {
-                    this.cancel();
-                }
+                DamageResult d = new DamageResult(DPT, false);
+                d.effectType = Constants.EFFECT_TYPE.DoT;
+                player.takeDamage(d);
             }
-        }, 1, 1);
+        }, .5f, 1);
     }
 }

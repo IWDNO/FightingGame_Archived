@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
 import com.mygdx.game.factory.effects.Effect;
+import com.mygdx.game.factory.effects.SwipeControls;
 import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.factory.BodyFactory.*;
@@ -79,6 +80,9 @@ public class King extends Player {
 
     @Override
     protected Effect addEffect(ATTACK_TYPE attackType) {
+        if (attackType == ATTACK_TYPE.E_ATTACK) {
+            return new SwipeControls(5);
+        }
         return null;
     }
 }

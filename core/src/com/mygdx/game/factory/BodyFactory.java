@@ -86,8 +86,8 @@ public class BodyFactory {
         ChainShape shape = new ChainShape();
         shape.createChain(new Vector2[]{upLeft, bottomLeft, bottomRight, upRight, upLeft});
         fixtureDef.shape = shape;
-        fixtureDef.friction = 0f;
-        fixtureDef.restitution = 0;
+//        fixtureDef.friction = 0f;
+//        fixtureDef.restitution = 0;
 
         world.createBody(bodyDef).createFixture(fixtureDef);
 

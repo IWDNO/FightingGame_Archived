@@ -25,8 +25,6 @@ public class Constants {
     }
 
     public enum EFFECT_TYPE {
-        DoT,
-        SLOWNESS,
-        DEF_REDUCTION
+        DoT
     }
 }

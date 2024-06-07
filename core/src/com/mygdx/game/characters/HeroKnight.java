@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
+import com.mygdx.game.factory.effects.Disarm;
 import com.mygdx.game.factory.effects.Effect;
 import com.mygdx.game.views.MainScreen;
 
@@ -80,6 +81,9 @@ public class HeroKnight extends Player {
 
     @Override
     protected Effect addEffect(ATTACK_TYPE attackType) {
+        if (attackType == ATTACK_TYPE.E_ATTACK) {
+            return new Disarm(5);
+        }
         return null;
     }
 }

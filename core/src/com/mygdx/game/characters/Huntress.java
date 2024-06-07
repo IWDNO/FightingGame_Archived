@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
 import com.mygdx.game.controller.ControlScheme;
 import com.mygdx.game.factory.effects.Effect;
+import com.mygdx.game.factory.effects.InfiniteJumps;
 import com.mygdx.game.views.MainScreen;
 
 import static com.mygdx.game.factory.BodyFactory.*;
@@ -74,6 +75,9 @@ public class Huntress extends Player {
                         eAttackCount--;
                     }
                 }, eAttackDelay);
+                InfiniteJumps jumps = new InfiniteJumps(5);
+                jumps.run(Huntress.this);
+                effectList.add(jumps);
             }
         }, 0.3f);
     }

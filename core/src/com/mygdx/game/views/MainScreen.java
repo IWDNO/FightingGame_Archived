@@ -179,12 +179,12 @@ public class MainScreen implements Screen {
             timer.scheduleTask(backToMenuTack, 3f);
             isEndedAlready = true;
         }
-        font.getData().setScale(1 / 12f);
+        font.getData().setScale(1 / 12f / 8f);
         float textWidth = getTextWidth(String.valueOf((int) (timeLimit - elapsedTime + 1)));
         font.setColor(1, 0, 0, 1);
         font.draw(sb, String.valueOf((int) (timeLimit - elapsedTime + 1)), 0 - textWidth / 2, WORLD_HEIGHT / 2.5f);
 
-        font.getData().setScale(1 / 6f);
+        font.getData().setScale(1 / 6f / 8f);
         font.setColor(1, 1, 1, 1);
         String text = player1.getHP() <= 0 && player2.getHP() <= 0
                 ? "Tie!" : "Player " + player.getPlayerNumber() + " wins!";

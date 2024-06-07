@@ -14,13 +14,15 @@ import com.mygdx.game.factory.effects.Effect;
 import com.mygdx.game.utils.DamageResult;
 import com.mygdx.game.views.MainScreen;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
 
-import static com.mygdx.game.factory.BodyFactory.createDefaultPlayer;
-import static com.mygdx.game.factory.BodyFactory.removeDeadFixtures;
+import static com.mygdx.game.factory.BodyFactory.*;
 import static com.mygdx.game.utils.Constants.*;
 
 public abstract class Player {
+    protected int maxJumps = 2;
     protected final World world;
     protected final MainScreen screen;
     protected final int playerNumber;
@@ -35,13 +37,11 @@ public abstract class Player {
     protected float zoom;
     protected float attackDelay;
     protected float eAttackDelay;
-    protected float qAttackDelay;
     protected float eAttackAnimationTime;
-    protected float qAttackAnimationTime;
     protected float speed = 10;
     protected float dashDuration = .2f;
     protected float dashSpeed = 20f;
-    protected float dashDelay = .5f;
+    protected float dashDelay = 1f;
     protected float attackCount = 0;
     protected float eAttackCount = 0;
     protected float currentHealth;
@@ -63,13 +63,13 @@ public abstract class Player {
     protected Animation<TextureRegion> jumpDashAnimation;
     protected Animation<TextureRegion> deathAnimation;
 
-    protected Set<Animation<TextureRegion>> unbreakableAnimations;
+    protected final Set<Animation<TextureRegion>> unbreakableAnimations;
     protected float stateTime = 0f;
     protected Animation<TextureRegion> currentAnimation;
-
     protected float HIT_ANIMATION_TIME;
 
     protected Timer timer;
+    protected ArrayList<Effect> effectList = new ArrayList<>();
 
 
     public Player(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
@@ -108,12 +108,39 @@ public abstract class Player {
         return isFacingRight;
     }
 
+    public float getSpeed() {
+        return speed;
+    }
+
+    public ArrayList<Effect> getEffectList() {
+        return effectList;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public void setAttackCount(float attackCount) {
+        this.attackCount = attackCount;
+    }
+
+    public void setEAttackCount(float eAttackCount) {
+        this.eAttackCount = eAttackCount;
+    }
+
+    public void setMaxJumps(int maxJumps) {
+        this.maxJumps = maxJumps;
+    }
+
+
     protected abstract void setAnimations();
 
     protected abstract void createNormalAttack();    // configurable depending on animations
 
     protected abstract void createEAttack();    // configurable depending on animations
+
     protected abstract Effect addEffect(ATTACK_TYPE attackType);
+
 
     protected void useNormalAttack() {
         if (currentAnimation == hitAnimation || currentAnimation == eAttackAnimation) return;
@@ -154,7 +181,10 @@ public abstract class Player {
         if (currentHealth > 0) damageWriter.spawn(body.getPosition(), damage);
         currentHealth -= damage.value;
 
-        if (damage.getEffect() != null) damage.getEffect().run(this);
+        if (damage.getEffect() != null) {
+            damage.getEffect().run(this);
+            effectList.add(damage.getEffect());
+        }
 
         if (currentHealth <= 0) {
             if (currentAnimation != deathAnimation) stateTime = 0;
@@ -163,7 +193,7 @@ public abstract class Player {
             return;
         }
 
-        if (unbreakableAnimations.contains(currentAnimation) && currentAnimation != hitAnimation) return;
+        if (unbreakableAnimations.contains(currentAnimation) && (currentAnimation != hitAnimation)) return;
         stateTime = 0;
         currentAnimation = hitAnimation;
         scheduleAnimation(idleAnimation, HIT_ANIMATION_TIME);
@@ -178,6 +208,12 @@ public abstract class Player {
     }
 
     public void update(SpriteBatch sb) {
+        for (Iterator<Effect> iterator = effectList.iterator(); iterator.hasNext(); ) {
+            Effect effect = iterator.next();
+            if (effect.isDone()) iterator.remove();
+            else effect.update(sb, this);
+        }
+
         removeDeadFixtures(this);
         damageWriter.render(sb);
         updateFacingDirection();
@@ -227,13 +263,23 @@ public abstract class Player {
         if (Gdx.input.isKeyPressed(cs.moveLeftKey) && Gdx.input.isKeyPressed(cs.moveRightKey)) velX = 0;
 
         // up
-        if (Gdx.input.isKeyJustPressed(cs.jumpKey) && jumpCounter < 2) {
+        if (Gdx.input.isKeyJustPressed(cs.jumpKey) && jumpCounter < maxJumps) {
             jumpCounter++;
+            if (playerNumber == 2) {
+                System.out.println(jumpCounter + " " + maxJumps);
+            }
             float force = body.getMass() * 18000;
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
             body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
         }
-        if (body.getLinearVelocity().y == 0) jumpCounter = 0;
+        if (body.getLinearVelocity().y == 0) {
+            timer.scheduleTask(new Timer.Task() {
+                @Override
+                public void run() {
+                    if (body.getLinearVelocity().y == 0) jumpCounter = 0;
+                }
+            }, Gdx.graphics.getDeltaTime());
+        }
 
         // apply force (wtf is going on here?)
         body.setLinearVelocity(body.getLinearVelocity().x, body.getLinearVelocity().y < 10
