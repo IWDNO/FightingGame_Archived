@@ -1,5 +1,6 @@
 package com.mygdx.game.characters;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
@@ -27,7 +28,13 @@ public class King extends Player {
         this.eAttackAnimationTime = .4f;
         this.currentHealth = MAX_HP;
         this.HIT_ANIMATION_TIME = .4f;
+
+        this.swing1Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/king/swing1.mp3"));
+        this.swing2Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/king/swing2.mp3"));
+        this.hit1Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/king/hit1.mp3"));
+        this.hit2Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/king/hit2.mp3"));
     }
+
     @Override
     protected void setAnimations() {
         idleAnimation = AnimationFactory.create(8, .1f, 1, "images/King/Idle.png");
@@ -46,9 +53,11 @@ public class King extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
+                swing1Sound.play();
                 addAttackSensor(King.this, 1.6f, 2.85f, 0, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(King.this, ATTACK_TYPE.NORMAL_ATTACK);
+                    public void run() {
+                        removeAttackSensor(King.this, ATTACK_TYPE.NORMAL_ATTACK);
                     }
                 }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {
@@ -62,11 +71,13 @@ public class King extends Player {
 
     @Override
     protected void createEAttack() {
+        swing2Sound.play();
         timer.scheduleTask(new Timer.Task() {
             public void run() {
                 addAttackSensor(King.this, 3.25f, 1.5f, 1.4f, ATTACK_TYPE.E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
-                    public void run() {removeAttackSensor(King.this, ATTACK_TYPE.E_ATTACK);
+                    public void run() {
+                        removeAttackSensor(King.this, ATTACK_TYPE.E_ATTACK);
                     }
                 }, 0.1f);
                 timer.scheduleTask(new Timer.Task() {

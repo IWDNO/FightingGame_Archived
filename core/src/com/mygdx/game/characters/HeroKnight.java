@@ -1,5 +1,6 @@
 package com.mygdx.game.characters;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.animator.AnimationFactory;
@@ -27,6 +28,11 @@ public class HeroKnight extends Player {
         this.eAttackAnimationTime = .7f;
         this.currentHealth = MAX_HP;
         this.HIT_ANIMATION_TIME = .3f;
+
+        this.swing1Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/heroknight/swing1.mp3"));
+        this.swing2Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/heroknight/swing2.mp3"));
+        this.hit1Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/heroknight/hit1.mp3"));
+        this.hit2Sound = Gdx.audio.newSound(Gdx.files.internal("sounds/heroknight/hit2.mp3"));
     }
 
     @Override
@@ -47,6 +53,7 @@ public class HeroKnight extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
+                swing1Sound.play();
                 addAttackSensor(HeroKnight.this, 1.75f, .75f, .5f, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {removeAttackSensor(HeroKnight.this, ATTACK_TYPE.NORMAL_ATTACK);
@@ -65,6 +72,7 @@ public class HeroKnight extends Player {
     protected void createEAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
+                swing2Sound.play();
                 addAttackSensor(HeroKnight.this, 3f, 2.2f, .5f, ATTACK_TYPE.E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {removeAttackSensor(HeroKnight.this, ATTACK_TYPE.E_ATTACK);

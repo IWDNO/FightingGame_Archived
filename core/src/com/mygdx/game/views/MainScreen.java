@@ -1,6 +1,7 @@
 package com.mygdx.game.views;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -39,6 +40,8 @@ public class MainScreen implements Screen {
     private GlyphLayout layout = new GlyphLayout();
     private Timer.Task backToMenuTack;
     private float timeLimit = 3f, elapsedTime;
+
+    private final Music music;
 
     public MainScreen(FightingGame fg, int player1Index, int player2Index) {
         parent = fg;
@@ -84,6 +87,10 @@ public class MainScreen implements Screen {
         world.setContactListener(contactListener);
 
         elapsedTime = 0f;
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/background-music.mp3"));
+        music.setVolume(.2f);
+        music.play();
     }
 
     @Override
@@ -156,6 +163,7 @@ public class MainScreen implements Screen {
 
     @Override
     public void hide() {
+        music.pause();
         if (backToMenuTack != null) backToMenuTack.cancel();
     }
 
@@ -164,6 +172,9 @@ public class MainScreen implements Screen {
         world.dispose();
         debugRenderer.dispose();
         animator.dispose();
+
+        music.dispose();
+        // TODO character dispose and other disposable things
     }
 
     public void endGame(Player player) {

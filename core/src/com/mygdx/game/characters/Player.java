@@ -1,6 +1,7 @@
 package com.mygdx.game.characters;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -37,7 +38,9 @@ public abstract class Player {
     protected float zoom;
     protected float attackDelay;
     protected float eAttackDelay;
-    protected float eAttackAnimationTime;
+    protected float eAttackAnimationTime; // TODO создать поле attackAnimationTime. Сейчас время анимации и задержка
+                                          //      обычной атаки это одно и то же, хотя задержка на самом деле больше
+                                          //      (переделать метод createNormalAttack)
     protected float speed = 10;
     protected float dashDuration = .2f;
     protected float dashSpeed = 20f;
@@ -62,6 +65,11 @@ public abstract class Player {
     protected Animation<TextureRegion> dashAnimation;
     protected Animation<TextureRegion> jumpDashAnimation;
     protected Animation<TextureRegion> deathAnimation;
+
+    protected Sound swing1Sound;
+    protected Sound swing2Sound;
+    protected Sound hit1Sound;
+    protected Sound hit2Sound;
 
     protected final Set<Animation<TextureRegion>> unbreakableAnimations;
     protected float stateTime = 0f;
@@ -149,7 +157,7 @@ public abstract class Player {
             stateTime = 0f;
             currentAnimation = normalAttackAnimation;
             scheduleAnimation(idleAnimation, attackDelay); // assuming that `attackDelay` is equal to the animation time
-            createNormalAttack();
+            createNormalAttack(); // TODO вынести проигрывание звука в этот метод.
         }
     }
 
@@ -160,7 +168,7 @@ public abstract class Player {
             stateTime = 0f;
             currentAnimation = eAttackAnimation;
             scheduleAnimation(idleAnimation, eAttackAnimationTime);
-            createEAttack();
+            createEAttack(); // TODO вынести проигрывание звука в этот метод.
         }
     }
 
@@ -173,12 +181,14 @@ public abstract class Player {
         if (isCritical) damage *= 2;
         DamageResult damageResult = new DamageResult(damage, isCritical);
         damageResult.effect = addEffect(attackType);
+        damageResult.sound = attackType == ATTACK_TYPE.NORMAL_ATTACK ? hit1Sound : hit2Sound;
         return damageResult;
     }
 
     public void takeDamage(DamageResult damage) {
         damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
         if (currentHealth > 0) damageWriter.spawn(body.getPosition(), damage);
+        damage.sound.play();
         currentHealth -= damage.value;
 
         if (damage.getEffect() != null) {

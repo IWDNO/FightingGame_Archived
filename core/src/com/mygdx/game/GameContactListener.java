@@ -30,14 +30,12 @@ public class GameContactListener implements ContactListener {
         if (check(fa, fb, "Player1-NORMAL_ATTACK", "Player2")) {
             ((UserData) findInFixtureList(player1, "Player1-NORMAL_ATTACK").getUserData()).setDead(true);
             DamageResult damage = player1.generateDamage(ATTACK_TYPE.NORMAL_ATTACK);
-            Vector2 hitPosition = player2.getBody().getPosition();
             player2.takeDamage(damage);
 
 
         } else if (check(fa, fb, "Player2-NORMAL_ATTACK", "Player1")) {
             ((UserData) findInFixtureList(player2, "Player2-NORMAL_ATTACK").getUserData()).setDead(true);
             DamageResult damage = player2.generateDamage(ATTACK_TYPE.NORMAL_ATTACK);
-            Vector2 hitPosition = player1.getBody().getPosition();
             player1.takeDamage(damage);
 
         }
