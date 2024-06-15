@@ -1,4 +1,4 @@
-package com.mygdx.game.controller;
+package com.mygdx.game.utils;
 
 public class ControlScheme {
     public final int moveLeftKey;

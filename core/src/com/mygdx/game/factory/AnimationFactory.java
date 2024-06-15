@@ -1,4 +1,4 @@
-package com.mygdx.game.animator;
+package com.mygdx.game.factory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

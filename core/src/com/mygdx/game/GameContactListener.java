@@ -13,7 +13,6 @@ import static com.mygdx.game.utils.Constants.*;
 public class GameContactListener implements ContactListener {
     private Player player1, player2;
 
-
     public GameContactListener(MainScreen parent) {
         player1 = parent.player1;
         player2 = parent.player2;

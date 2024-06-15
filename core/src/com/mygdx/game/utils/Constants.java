@@ -1,9 +1,13 @@
 package com.mygdx.game.utils;
 
 import com.badlogic.gdx.Input;
-import com.mygdx.game.controller.ControlScheme;
 
 public class Constants {
+    public static final int SAI_HAN = 0;
+    public static final int KING = 1;
+    public static final int HUNTRESS = 2;
+    public static final int HERO_KNIGHT = 3;
+
     public static final float RATIO = 16f / 9f;
     public static final float WORLD_HEIGHT = 20;
     public static final float WORLD_WIDTH = WORLD_HEIGHT * RATIO;

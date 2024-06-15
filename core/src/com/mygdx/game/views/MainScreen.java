@@ -13,6 +13,7 @@ import com.mygdx.game.FightingGame;
 import com.mygdx.game.GameContactListener;
 import com.mygdx.game.animator.Animator;
 import com.mygdx.game.characters.*;
+import com.mygdx.game.factory.StatsManager;
 
 import static com.mygdx.game.utils.Constants.*;
 import static com.mygdx.game.factory.BodyFactory.*;
@@ -32,6 +33,8 @@ public class MainScreen implements Screen {
     public Player player1;
     public Player player2;
 
+    private String player1Name, player2Name;
+
     private final Texture platform = new Texture("map/platform.png");
     private final Animator animator = new Animator();
     private final TextureRegion healthRegion;
@@ -42,6 +45,8 @@ public class MainScreen implements Screen {
 
     private final Music music;
     private Sprite mapSprite;
+    private boolean isGameEnded = false;
+
 
     public MainScreen(FightingGame fg, int player1Index, int player2Index) {
         parent = fg;
@@ -61,6 +66,8 @@ public class MainScreen implements Screen {
         world = new World(new Vector2(0, -20), false);
         debugRenderer = new Box2DDebugRenderer();
 
+        player1Name = getPlayerName(player1Index);
+        player2Name = getPlayerName(player2Index);
         player1 = createPlayer(player1Index, 1);
         player2 = createPlayer(player2Index, 2);
 
@@ -187,12 +194,24 @@ public class MainScreen implements Screen {
     }
 
     public void endGame(Player player) {
-        timer.scheduleTask(new Timer.Task() {
-            @Override
-            public void run() {
-                parent.changeScreen(FightingGame.MENU);
-            }
-        }, timeLimit);
+        if (!isGameEnded) {
+            isGameEnded = true;
+            timer.scheduleTask(new Timer.Task() {
+                @Override
+                public void run() {
+                    parent.changeScreen(FightingGame.MENU);
+                }
+            }, timeLimit);
+
+            String winner = player == player1 ? player1Name : player2Name;
+            String loser = player == player1 ? player2Name : player1Name;
+            new Thread(() -> {
+                StatsManager statsManager = new StatsManager();
+                statsManager.incrementGamesPlayed(winner);
+                statsManager.incrementGamesPlayed(loser);
+                statsManager.incrementWins(winner);
+            }).start();
+        }
 
         font.getData().setScale(1 / 12f / 8f);
         float textWidth = getTextWidth(String.valueOf((int) (timeLimit - elapsedTime + 1)));
@@ -201,8 +220,7 @@ public class MainScreen implements Screen {
 
         font.getData().setScale(1 / 6f / 8f);
         font.setColor(1, 1, 1, 1);
-        String text = player1.getHP() <= 0 && player2.getHP() <= 0
-                ? "Tie!" : "Player " + player.getPlayerNumber() + " wins!";
+        String text = "Player " + player.getPlayerNumber() + " wins!";
         textWidth = getTextWidth(text);
         font.draw(sb, text, 0 - textWidth / 2, WORLD_HEIGHT / 4);
 
@@ -226,6 +244,16 @@ public class MainScreen implements Screen {
                 case 3 -> new HeroKnight(world, 2, this, PLAYER2_CONTROL_SCHEME, 15, -2);
                 default -> null;
             };
+    }
+
+    private String getPlayerName(int index) {
+        return switch (index) {
+            case SAI_HAN -> "SaiHan";
+            case KING -> "King";
+            case HERO_KNIGHT -> "HeroKnight";
+            case HUNTRESS -> "Huntress";
+            default -> "";
+        };
     }
 
     private float getTextWidth(String text) {
