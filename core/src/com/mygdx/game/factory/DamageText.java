@@ -40,6 +40,10 @@ public class DamageText {
         }
     }
 
+    public void dispose() {
+        font.dispose();
+    }
+
     private static class DamageTextInstance {
         private final int playerNumber;
         private Vector2 position;

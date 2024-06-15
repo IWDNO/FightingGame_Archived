@@ -13,7 +13,7 @@ public class InfiniteJumps extends Effect{
     @Override
     public void run(Player player) {
         player.setMaxJumps(69);
-        Timer.schedule(new Timer.Task() {
+        timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
                 player.setMaxJumps(2);

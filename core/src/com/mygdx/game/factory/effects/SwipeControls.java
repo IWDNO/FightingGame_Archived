@@ -13,7 +13,7 @@ public class SwipeControls extends Effect{
     @Override
     public void run(Player player) {
         player.setSpeed(-player.getSpeed());
-        Timer.schedule(new Timer.Task() {
+        timer.scheduleTask(new Timer.Task() {
             public void run() {
                 player.setSpeed(-player.getSpeed());
             }

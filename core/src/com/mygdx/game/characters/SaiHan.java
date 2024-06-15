@@ -55,7 +55,6 @@ public class SaiHan extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                swing1Sound.play();
                 addAttackSensor(SaiHan.this, 1.75f, 2.75f, 0, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {
@@ -73,7 +72,6 @@ public class SaiHan extends Player {
 
     @Override
     protected void createEAttack() {
-        swing2Sound.play();
         timer.scheduleTask(new Timer.Task() {
             public void run() {
                 addAttackSensor(SaiHan.this, 2.9f, 2.1f, 1f, ATTACK_TYPE.E_ATTACK);

@@ -17,9 +17,9 @@ public class King extends Player {
     public King(World world, int playerNumber, MainScreen screen, ControlScheme cs, int x, int y) {
         super(world, playerNumber, screen, cs, x, y);
         this.MAX_HP = 1100;
-        this.ATK = 80;
+        this.ATK = 90;
         this.DEF_SCALE = 1.1f;
-        this.NORMAL_ATTACK_SCALE = .75f;
+        this.NORMAL_ATTACK_SCALE = 1f;
         this.E_ATTACK_SCALE = 1.5f;
         this.Q_ATTACK_SCALE = 1f;
         this.zoom = 1.25f;
@@ -53,7 +53,6 @@ public class King extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                swing1Sound.play();
                 addAttackSensor(King.this, 1.6f, 2.85f, 0, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {
@@ -71,7 +70,6 @@ public class King extends Player {
 
     @Override
     protected void createEAttack() {
-        swing2Sound.play();
         timer.scheduleTask(new Timer.Task() {
             public void run() {
                 addAttackSensor(King.this, 3.25f, 1.5f, 1.4f, ATTACK_TYPE.E_ATTACK);

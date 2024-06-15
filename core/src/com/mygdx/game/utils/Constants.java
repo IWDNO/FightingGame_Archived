@@ -12,7 +12,7 @@ public class Constants {
     public static final float PLAYER_WIDTH = PLAYER_HEIGHT / 2;
 
     public static final ControlScheme PLAYER1_CONTROL_SCHEME = new ControlScheme(
-            Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.V, Input.Keys.Z, Input.Keys.X, Input.Keys.C
+            Input.Keys.D, Input.Keys.G, Input.Keys.R, Input.Keys.E, Input.Keys.Q, Input.Keys.W, Input.Keys.C
     );
     public static final ControlScheme PLAYER2_CONTROL_SCHEME = new ControlScheme(
             Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.M, Input.Keys.SLASH, Input.Keys.PERIOD, Input.Keys.COMMA

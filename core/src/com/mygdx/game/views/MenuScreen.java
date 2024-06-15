@@ -83,11 +83,11 @@ public class MenuScreen implements Screen {
 
     @Override
     public void hide() {
-
     }
 
     @Override
     public void dispose() {
         stage.dispose();
+        skin.dispose();
     }
 }

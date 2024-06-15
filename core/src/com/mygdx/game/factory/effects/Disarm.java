@@ -14,7 +14,7 @@ public class Disarm extends Effect{
     public void run(Player player) {
         player.setAttackCount(69);
         player.setEAttackCount(69);
-        Timer.schedule(new Timer.Task() {
+        timer.scheduleTask(new Timer.Task() {
             public void run() {
                 player.setAttackCount(0);
                 player.setEAttackCount(0);

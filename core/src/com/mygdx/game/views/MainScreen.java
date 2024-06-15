@@ -36,12 +36,12 @@ public class MainScreen implements Screen {
     private final Animator animator = new Animator();
     private final TextureRegion healthRegion;
     private final TextureRegion healthOutline;
-    private boolean isEndedAlready = false;
-    private GlyphLayout layout = new GlyphLayout();
-    private Timer.Task backToMenuTack;
+    private final GlyphLayout layout = new GlyphLayout();
+    private final Timer timer = new Timer();
     private float timeLimit = 3f, elapsedTime;
 
     private final Music music;
+    private Sprite mapSprite;
 
     public MainScreen(FightingGame fg, int player1Index, int player2Index) {
         parent = fg;
@@ -50,7 +50,7 @@ public class MainScreen implements Screen {
         font.setUseIntegerPositions(false);
 
         animator.create();
-        Sprite mapSprite = new Sprite(new Texture(Gdx.files.internal("map/bg.png")));
+        mapSprite = new Sprite(new Texture(Gdx.files.internal("map/bg.png")));
         mapSprite.setSize(36f, 20f);
         mapSprite.setPosition(-18, -10);
 
@@ -107,8 +107,8 @@ public class MainScreen implements Screen {
         sb.begin();
 
         //render background & platforms
-//        mapSprite.draw(sb);
-        animator.render(sb);
+        mapSprite.draw(sb);
+//        animator.render(sb);
         sb.draw(platform, -WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,
                 WORLD_WIDTH / 4f / 2f, .6f);
         sb.draw(platform, WORLD_WIDTH / 2, -WORLD_HEIGHT / 5 - platform.getHeight() / WORLD_HEIGHT,
@@ -123,7 +123,7 @@ public class MainScreen implements Screen {
         player1.update(sb);
         player2.update(sb);
 
-        // hp drawing
+//         hp drawing
         float xPos = WORLD_WIDTH / 2 * .9f;
         float yPos = WORLD_HEIGHT / 2 * .4f;
         float w = WORLD_WIDTH / 40;
@@ -163,33 +163,37 @@ public class MainScreen implements Screen {
 
     @Override
     public void hide() {
-        music.pause();
-        if (backToMenuTack != null) backToMenuTack.cancel();
+        dispose();
     }
 
     @Override
     public void dispose() {
-        world.dispose();
-        debugRenderer.dispose();
-        animator.dispose();
+        System.out.println("disposed");
+        player2.dispose();
+        player1.dispose();
 
+        debugRenderer.dispose();
+        world.dispose();
+        animator.dispose();
         music.dispose();
-        // TODO character dispose and other disposable things
+
+        font.dispose();
+
+        sb.dispose();
+        platform.dispose();
+        mapSprite.getTexture().dispose();
+
+        timer.clear();
     }
 
     public void endGame(Player player) {
-        if (!isEndedAlready) {
-            Timer timer = new Timer();
-            backToMenuTack = new Timer.Task() {
-                @Override
-                public void run() {
-                    parent.changeScreen(FightingGame.MENU);
+        timer.scheduleTask(new Timer.Task() {
+            @Override
+            public void run() {
+                parent.changeScreen(FightingGame.MENU);
+            }
+        }, timeLimit);
 
-                }
-            };
-            timer.scheduleTask(backToMenuTack, 3f);
-            isEndedAlready = true;
-        }
         font.getData().setScale(1 / 12f / 8f);
         float textWidth = getTextWidth(String.valueOf((int) (timeLimit - elapsedTime + 1)));
         font.setColor(1, 0, 0, 1);

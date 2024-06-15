@@ -53,7 +53,6 @@ public class HeroKnight extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                swing1Sound.play();
                 addAttackSensor(HeroKnight.this, 1.75f, .75f, .5f, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {removeAttackSensor(HeroKnight.this, ATTACK_TYPE.NORMAL_ATTACK);
@@ -72,7 +71,6 @@ public class HeroKnight extends Player {
     protected void createEAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                swing2Sound.play();
                 addAttackSensor(HeroKnight.this, 3f, 2.2f, .5f, ATTACK_TYPE.E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {removeAttackSensor(HeroKnight.this, ATTACK_TYPE.E_ATTACK);

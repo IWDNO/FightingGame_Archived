@@ -18,7 +18,6 @@ public class Animator {
     // Objects used
     Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
     Texture walkSheet;
-    SpriteBatch spriteBatch;
 
     // A variable for tracking elapsed time for the animation
     float stateTime;
@@ -63,7 +62,6 @@ public class Animator {
 
 
     public void dispose() { // SpriteBatches and Textures must always be disposed
-        spriteBatch.dispose();
-        walkSheet.dispose();
+        if (walkSheet != null) walkSheet.dispose();
     }
 }

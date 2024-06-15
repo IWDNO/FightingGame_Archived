@@ -20,7 +20,6 @@ public class FightingGame extends Game {
 	public final static int DRAFT = 1;
 	public final static int APPLICATION = 2;
 	public final static int ENDGAME = 3;
-	private Music playSong;
 
 	@Override
 	public void create() {
@@ -28,9 +27,6 @@ public class FightingGame extends Game {
 
 		assetManager.queueAddMusic();
 		assetManager.manager.finishLoading();
-		playSong = assetManager.manager.get("music/background-music.mp3");
-
-//		playSong.play();
 	}
 
 	public void changeScreen(int screen) {
@@ -56,7 +52,6 @@ public class FightingGame extends Game {
 
 	@Override
 	public void dispose(){
-		playSong.dispose();
 		assetManager.manager.dispose();
 	}
 }

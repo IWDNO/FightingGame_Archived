@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
 import com.badlogic.gdx.utils.Timer;
 import com.mygdx.game.factory.DamageText;
 import com.mygdx.game.controller.ControlScheme;
@@ -39,8 +40,8 @@ public abstract class Player {
     protected float attackDelay;
     protected float eAttackDelay;
     protected float eAttackAnimationTime; // TODO создать поле attackAnimationTime. Сейчас время анимации и задержка
-                                          //      обычной атаки это одно и то же, хотя задержка на самом деле больше
-                                          //      (переделать метод createNormalAttack)
+    //      обычной атаки это одно и то же, хотя задержка на самом деле больше
+    //      (переделать метод createNormalAttack)
     protected float speed = 10;
     protected float dashDuration = .2f;
     protected float dashSpeed = 20f;
@@ -158,6 +159,7 @@ public abstract class Player {
             currentAnimation = normalAttackAnimation;
             scheduleAnimation(idleAnimation, attackDelay); // assuming that `attackDelay` is equal to the animation time
             createNormalAttack(); // TODO вынести проигрывание звука в этот метод.
+            swing1Sound.play();
         }
     }
 
@@ -169,6 +171,7 @@ public abstract class Player {
             currentAnimation = eAttackAnimation;
             scheduleAnimation(idleAnimation, eAttackAnimationTime);
             createEAttack(); // TODO вынести проигрывание звука в этот метод.
+            swing2Sound.play();
         }
     }
 
@@ -187,8 +190,10 @@ public abstract class Player {
 
     public void takeDamage(DamageResult damage) {
         damage.value = isDashing ? (damage.value / DEF_SCALE) / 2f : (damage.value / DEF_SCALE);
-        if (currentHealth > 0) damageWriter.spawn(body.getPosition(), damage);
-        damage.sound.play();
+        if (currentHealth > 0) {
+            damageWriter.spawn(body.getPosition(), damage);
+            damage.sound.play();
+        }
         currentHealth -= damage.value;
 
         if (damage.getEffect() != null) {
@@ -220,7 +225,10 @@ public abstract class Player {
     public void update(SpriteBatch sb) {
         for (Iterator<Effect> iterator = effectList.iterator(); iterator.hasNext(); ) {
             Effect effect = iterator.next();
-            if (effect.isDone()) iterator.remove();
+            if (effect.isDone()) {
+                iterator.remove();
+                effect.dispose();
+            }
             else effect.update(sb, this);
         }
 
@@ -341,5 +349,29 @@ public abstract class Player {
                 currentAnimation = animation;
             }
         }, delaySec - Gdx.graphics.getDeltaTime() * 1.1f);
+    }
+
+    public void dispose() {
+        timer.clear();
+        swing2Sound.dispose();
+        swing1Sound.dispose();
+        hit1Sound.dispose();
+        hit2Sound.dispose();
+
+        idleAnimation.getKeyFrames()[0].getTexture().dispose();
+        dashAnimation.getKeyFrames()[0].getTexture().dispose();
+        jumpAnimation.getKeyFrames()[0].getTexture().dispose();
+        fallAnimation.getKeyFrames()[0].getTexture().dispose();
+        jumpDashAnimation.getKeyFrames()[0].getTexture().dispose();
+        normalAttackAnimation.getKeyFrames()[0].getTexture().dispose();
+        eAttackAnimation.getKeyFrames()[0].getTexture().dispose();
+        deathAnimation.getKeyFrames()[0].getTexture().dispose();
+        hitAnimation.getKeyFrames()[0].getTexture().dispose();
+        runAnimation.getKeyFrames()[0].getTexture().dispose();
+
+        damageWriter.dispose();
+        for (Effect effect : effectList) {
+            effect.dispose();
+        }
     }
 }

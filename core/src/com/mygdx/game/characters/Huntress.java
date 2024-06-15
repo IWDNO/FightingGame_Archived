@@ -53,7 +53,6 @@ public class Huntress extends Player {
     protected void createNormalAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                swing1Sound.play();
                 addAttackSensor(Huntress.this, 2.25f, 1.3f, .8f, ATTACK_TYPE.NORMAL_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {removeAttackSensor(Huntress.this, ATTACK_TYPE.NORMAL_ATTACK);
@@ -72,7 +71,6 @@ public class Huntress extends Player {
     protected void createEAttack() {
         timer.scheduleTask(new Timer.Task() {
             public void run() {
-                swing2Sound.play();
                 addAttackSensor(Huntress.this, 2.5f, 1f, .75f, ATTACK_TYPE.E_ATTACK);
                 timer.scheduleTask(new Timer.Task() {
                     public void run() {removeAttackSensor(Huntress.this, ATTACK_TYPE.E_ATTACK);

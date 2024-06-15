@@ -19,7 +19,7 @@ public class DoT extends Effect {
 
     @Override
     public void run(final Player player) {
-        Timer.schedule(new Timer.Task() {
+        timer.scheduleTask(new Timer.Task() {
             public void run() {
                 if (player.getHP() <= 0 || isDone()) {
                     this.cancel();

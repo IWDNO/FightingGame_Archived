@@ -27,7 +27,6 @@ public class DraftScreen implements Screen {
     private final BitmapFont font;
 
     private final Timer timer;
-    private Timer.Task defaultTimer, finalTimer;
     private float elapsedTime;
     private float timeLimit;
     private boolean isPlayer1Ready, isPlayer2Ready, isBothReady;
@@ -102,13 +101,13 @@ public class DraftScreen implements Screen {
         };
 
         Gdx.input.setInputProcessor(controller);
-        defaultTimer = new Timer.Task() {
+
+        timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
                 parent.setScreen(new MainScreen(parent, player1Index, player2Index));
             }
-        };
-        timer.scheduleTask(defaultTimer, timeLimit);
+        }, timeLimit);
     }
 
     @Override
@@ -118,13 +117,12 @@ public class DraftScreen implements Screen {
             isBothReady = true;
             elapsedTime = 0f;
             timeLimit = 3f;
-            finalTimer = new Timer.Task() {
+            timer.scheduleTask(new Timer.Task() {
                 @Override
                 public void run() {
                     parent.setScreen(new MainScreen(parent, player1Index, player2Index));
                 }
-            };
-            timer.scheduleTask(finalTimer, timeLimit);
+            }, timeLimit);
 
         }
         elapsedTime += v;
@@ -196,13 +194,12 @@ public class DraftScreen implements Screen {
 
     @Override
     public void hide() {
-        defaultTimer.cancel();
-        if (finalTimer != null) finalTimer.cancel();
+        timer.clear();
     }
 
     @Override
     public void dispose() {
-
+        font.dispose();
     }
 
     private float getTextWidth(String text) {
